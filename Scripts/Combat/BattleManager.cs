@@ -62,7 +62,20 @@ namespace PlantKitty.Scripts.Combat
             return uniqueId;
         }
 
-        private async Task DisplayCharacters(string title, List<Character> characters, IMessageChannel channel)
+        private async Task DisplayCharacters(string title, List<Monster> characters, IMessageChannel channel)
+        {
+            EmbedBuilder builder = new EmbedBuilder()
+                .WithTitle(title);
+            for (int i = 0; i < characters.Count; i++)
+            {
+                string info = $"HP: {characters[i].currentStats.HP}/{characters[i].maxStats.HP}" +
+                              $"\nMP: {characters[i].currentStats.MP}/{characters[i].maxStats.MP}";
+                builder.AddField($"{i}. {characters[i].name}", info, true);
+            }
+
+            await channel.SendMessageAsync(null, false, builder.Build());
+        }
+        private async Task DisplayCharacters(string title, List<Player> characters, IMessageChannel channel)
         {
             EmbedBuilder builder = new EmbedBuilder()
                 .WithTitle(title);
@@ -82,7 +95,7 @@ namespace PlantKitty.Scripts.Combat
         }
         private async Task Victory(Battle battle, IMessageChannel channel)
         {
-            await channel.SendMessageAsync($"Victory!");
+            await channel.SendMessageAsync($"Victory!\nGenerate rewards...");
 
             // Calculate experience gained
             float xpGain = 0f;
@@ -93,24 +106,23 @@ namespace PlantKitty.Scripts.Combat
             // Give experience and loot to players
             foreach (Player p in battle.players)
             {
-                string log = "";
 
                 // Add XP
                 p.AddExp(xpGain);
-                log += $"You have gained {xpGain} experience!";
+                await channel.SendMessageAsync($"You have gained {xpGain} experience!");
 
                 // Check level up
                 await Task.Delay(500);
                 if (p.CheckIfLeveledUp(out Attributes changes))
                 {
-                    log += "\nYou have leveled up!";
+                    await channel.SendMessageAsync("You have leveled up!");
 
                     FieldInfo[] fields = changes.GetType().GetFields();
                     foreach (FieldInfo f in fields)
                     {
                         int val = (int)f.GetValue(changes);
-                        if (val != 0 )
-                            log += $"\n{f.Name}: {UtilityMethods.ToSignString(val)}";
+                        if (val != 0)
+                            await channel.SendMessageAsync($"{f.Name}: {UtilityMethods.ToSignString(val)}");
                     }
                 }
 
@@ -136,11 +148,8 @@ namespace PlantKitty.Scripts.Combat
                 foreach (KeyValuePair<string, InventoryItem> l in loot)
                 {
                     p.inventory.AddItem(l.Value.item, l.Value.amount);
-                    log += $"\nGained x{l.Value.amount} {l.Key}";
+                    await channel.SendMessageAsync($"Gained x{l.Value.amount} {l.Key}");
                 }
-
-                // Display info
-                await channel.SendMessageAsync(log);
 
                 p.SetTask(null);
                 PlayerData.Instance.SavePlayer(p.id);
@@ -188,7 +197,7 @@ namespace PlantKitty.Scripts.Combat
                 Battling task = new Battling(battle.id);
                 player.SetTask(task);
                 await channel.SendMessageAsync($"You are now in combat!");
-                await DisplayCharacters("Monsters", battle.monsters.Cast<Character>().ToList(), channel);
+                await DisplayCharacters("Monsters", battle.monsters, channel);
             }
             else
                 await channel.SendMessageAsync($"You found no monsters to fight...");
@@ -215,10 +224,10 @@ namespace PlantKitty.Scripts.Combat
                 battle.ClearActions();
 
                 // DIsplay update players info
-                await DisplayCharacters("Players", battle.players.Cast<Character>().ToList(), channel);
+                await DisplayCharacters("Players", battle.players, channel);
 
                 // Display updated monsters info
-                await DisplayCharacters("Monsters", battle.monsters.Cast<Character>().ToList(), channel);
+                await DisplayCharacters("Monsters", battle.monsters, channel);
 
                 // Check players
                 List<Player> alivePlayers = battle.players.Where(p => p.currentStats.HP > 0).ToList();

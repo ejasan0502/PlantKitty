@@ -110,8 +110,9 @@ namespace PlantKitty.Commands
             {
                 if (attribute != "" && amount > 0)
                 {
+                    if (player.pointsAvailable < amount) amount = player.pointsAvailable;
                     player.AddAttribute(attribute, amount);
-                    await ReplyAsync($"@{Context.User.Username}. {attribute} increased by {amount}");
+                    await ReplyAsync($"{Context.User.Mention}. {attribute} increased by {amount}");
                 } else if (attribute == "")
                 {
                     string info = $"STR: {player.attributes.STR}\n" +
@@ -155,6 +156,20 @@ namespace PlantKitty.Commands
             }
             else
                 await ReplyAsync(log);
+        }
+        [Command("save")]
+        public async Task SavePlayer()
+        {
+            PlayerData.Instance.SavePlayer(Context.User.Id);
+            await ReplyAsync($"{Context.User.Mention}. Data saved!");
+        }
+        [Command("bug")]
+        public async Task BugReport(params string[] vals)
+        {
+            string report = string.Join(" ", vals);
+            File.AppendAllText("Resources/Bugs.txt", " - " + report + Environment.NewLine);
+
+            await ReplyAsync($"{Context.User.Mention}. Bug report sent!");
         }
     }
 }

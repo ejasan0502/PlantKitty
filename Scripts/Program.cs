@@ -19,8 +19,6 @@ namespace PlantKitty
     {
         static void Main(string[] args) => new Program().RunBotAsync().GetAwaiter().GetResult();
 
-        private const bool debugging = true;
-
         private DiscordSocketClient client;
         private CommandService commands;
         private IServiceProvider service;
@@ -55,7 +53,13 @@ namespace PlantKitty
             client.Log += Log;
 
             await RegisterCommandsAsync();
-            await client.LoginAsync(Discord.TokenType.Bot, !debugging ? Config.bot.token : Config.bot.debugToken);
+
+#if DEBUG
+            await client.LoginAsync(Discord.TokenType.Bot, Config.bot.debugToken);
+#else
+            await client.LoginAsync(Discord.TokenType.Bot, Config.bot.token);
+#endif
+
             await client.StartAsync();
 
             client.Ready += OnReady;
@@ -65,23 +69,25 @@ namespace PlantKitty
 
         private async Task OnReady()
         {
-            var channel = client.GetChannel(!debugging ? Config.bot.channel : Config.bot.debugChannel);
+            ulong token = Config.bot.channel;
+#if DEBUG
+            token = Config.bot.debugChannel;
+#endif
+
+            var channel = client.GetChannel(token);
             playerData.LoadData(channel.Users);
 
-            if (!debugging)
-            {
-                string startupText = $"Version: {Config.bot.version}\n";
+#if DEBUG
+            await ((IMessageChannel)channel).SendMessageAsync("Bot is now running!");
+#else
+            string startupText = $"Version: {Config.bot.version}\n";
                 for (int i = 0; i < Config.bot.changes.Count; i++)
                 {
                     if (i != 0) startupText += "\n";
                     startupText += Config.bot.changes[i];
                 }
                 await ((IMessageChannel)channel).SendMessageAsync(startupText);
-            }
-            else
-            {
-                await ((IMessageChannel)channel).SendMessageAsync("Bot is now running!");
-            }
+#endif
 
             await Task.Delay(1);
         }

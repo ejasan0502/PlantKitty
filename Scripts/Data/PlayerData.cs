@@ -104,6 +104,7 @@ namespace PlantKitty.Scripts.Data
                     Player p = new Player();
                     p.id = user.Id;
                     p.name = user.Username;
+                    players.Add(p.id, p);
 
                     string json = JsonConvert.SerializeObject(p);
                     File.WriteAllText(playerDataPath + p.id + ".json", json);

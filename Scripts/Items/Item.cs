@@ -41,6 +41,14 @@ namespace PlantKitty.Scripts.Data
             }
             return Color.Default;
         }
+        public override bool Equals(object obj)
+        {
+            return obj is Item && ((Item)obj).name == name;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     public enum Tier

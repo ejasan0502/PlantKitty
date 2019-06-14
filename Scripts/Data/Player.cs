@@ -162,6 +162,7 @@ namespace PlantKitty.Scripts.Data
 
             int amt = (int)field.GetValue(attributes) + amount;
             field.SetValue(attributes, amt);
+            pointsAvailable -= amount;
 
             CalculateStats();
             CalculateMaxStats();
