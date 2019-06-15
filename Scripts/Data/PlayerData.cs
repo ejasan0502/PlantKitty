@@ -63,6 +63,11 @@ namespace PlantKitty.Scripts.Data
 
             players[id].name = name;
         }
+        public void NewPlayer(ulong id, string name)
+        {
+            if (players.ContainsKey(id)) players.Remove(id);
+            AddPlayer(id, name);
+        }
         public void SaveData()
         {
             foreach (ulong key in players.Keys)

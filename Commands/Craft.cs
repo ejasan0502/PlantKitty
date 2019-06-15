@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using PlantKitty.Scripts.Actions;
 using PlantKitty.Scripts.Data;
@@ -27,7 +28,81 @@ namespace PlantKitty.Commands
         [Command]
         public async Task CraftItem(string itemType)
         {
-            await ReplyAsync($"");
+            Player player;
+            string log;
+
+            if (CheckPlayer(out player, out log))
+            {
+                List<string> itemTypes = Enum.GetNames(typeof(ItemType)).ToList();
+                if (itemTypes.Contains(itemType))
+                {
+                    List<Recipe> recipes = GameData.Instance.GetRecipes(itemType);
+                    if (recipes == null) return;
+
+                    EmbedBuilder builder = new EmbedBuilder()
+                        .WithTitle($"Displaying first 10 recipes of {itemType}");
+
+                    int count = 0;
+                    for (int i = 0; i < recipes.Count; i++)
+                    {
+                        if (i >= 10) break;
+
+                        builder.AddField(recipes[i].product, recipes[i].Ingredients, count < 3);
+                        count++;
+                        if (count > 3) count = 0; 
+                    }
+
+                    await ReplyAsync(null, false, builder.Build());
+                }
+            }
+            else
+                await ReplyAsync(log);
+        }
+
+        [Command]
+        public async Task CraftItem(string itemName, int amount)
+        {
+            Player player;
+            string log;
+
+            if (CheckPlayer(out player, out log))
+            {
+                Recipe recipe = GameData.Instance.GetRecipe(itemName);
+                if (recipe == null) return;
+
+                if (recipe.CanCraft(player.inventory, amount))
+                {
+                    Crafting crafting;
+                    if (player.task == null)
+                        crafting = new Crafting();
+                    else if (player.task is Crafting)
+                        crafting = player.task as Crafting;
+                    else
+                    {
+                        await ReplyAsync($"{Context.User.Username} is busy!");
+                        return;
+                    }
+
+                    crafting.AddCraft(recipe, amount, player.inventory);
+                }
+                else
+                    await ReplyAsync($"{Context.User.Mention}. Not enough materials!");
+            }
+            else
+                await ReplyAsync(log);
+        }
+
+        [Command("check")]
+        public async Task CheckCraft(string itemName)
+        {
+            Recipe recipe = GameData.Instance.GetRecipe(itemName);
+            if (recipe != null)
+            {
+                await ReplyAsync($"{itemName} Recipe:\n{recipe.Ingredients}");
+            } else
+            {
+                await ReplyAsync($"There is no recipe for {itemName}...");
+            }
         }
     }
 }

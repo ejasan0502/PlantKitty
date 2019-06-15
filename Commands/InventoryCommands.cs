@@ -127,10 +127,14 @@ namespace PlantKitty.Commands
             if (CheckPlayer(out player, out log))
             {
                 EmbedBuilder builder = new EmbedBuilder()
-                    .WithTitle($"@{Context.User.Username}'s Inventory");
+                    .WithTitle($"{Context.User.Username}'s Inventory");
+
+                int count = 0;
                 foreach (InventoryItem inventoryItem in player.inventory.slots)
                 {
-                    builder.AddField($"{inventoryItem.item.name} x{inventoryItem.amount}", inventoryItem.item.Description, true);
+                    builder.AddField($"{inventoryItem.item.name} x{inventoryItem.amount}", inventoryItem.item.Description, count < 3);
+                    count++;
+                    if (count > 3) count = 0;
                 }
                 await ReplyAsync(null, false, builder.Build());
             }

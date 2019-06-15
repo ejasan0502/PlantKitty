@@ -54,8 +54,8 @@ namespace PlantKitty.Scripts.Data
     public enum ItemType
     {
         item,
-        consumable,
-        equip
+        equip,
+        consumable
     }
     public enum Tier
     {

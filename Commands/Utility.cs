@@ -23,8 +23,25 @@ namespace PlantKitty.Commands
             if (CheckPlayer(out player, out log))
             {
                 if (player.task != null)
+                {
                     log = Context.User.Username + ". " + player.task.Description();
-                else
+                    if (player.task is Crafting)
+                    {
+                        Crafting crafting = player.task as Crafting;
+                        EmbedBuilder builder = new EmbedBuilder();
+
+                        List<InventoryItem> craftedItems = crafting.Check(player, player.inventory);
+                        foreach (InventoryItem slot in craftedItems)
+                        {
+                            builder.AddField(slot.item.name + " x" + slot.amount, slot.item.Description, true);
+                        }
+                        await ReplyAsync(null, false, builder.Build());
+
+                        // Remove task if no more recipes in crafting queue
+                        if (crafting.craftQueue.Count < 1)
+                            player.SetTask(null);
+                    }
+                } else
                     log = "You aren't doing anything.";
             } 
             await ReplyAsync(log);
@@ -171,6 +188,12 @@ namespace PlantKitty.Commands
             File.AppendAllText("Resources/Bugs.txt", " - " + report + Environment.NewLine);
 
             await ReplyAsync($"{Context.User.Mention}. Bug report sent!");
+        }
+        [Command("reset")]
+        public async Task Reset()
+        {
+            PlayerData.Instance.NewPlayer(Context.User.Id, Context.User.Username);
+            await ReplyAsync($"{Context.User.Username} has started over!");
         }
     }
 }

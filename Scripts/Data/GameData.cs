@@ -19,7 +19,10 @@ namespace PlantKitty.Scripts.Data
         private Dictionary<string, Item> items;
         private Dictionary<string, Field> fields;
         private Dictionary<string, Monster> monsters;
-        private Dictionary<string, Recipe> recipes;
+
+        private List<Recipe> allRecipes;
+        private Dictionary<string, List<int>> recipeItemTypes;
+        private Dictionary<string, int> recipes;
 
         private static GameData instance;
         public static GameData Instance
@@ -39,7 +42,9 @@ namespace PlantKitty.Scripts.Data
             items = new Dictionary<string, Item>();
             fields = new Dictionary<string, Field>();
             monsters = new Dictionary<string, Monster>();
-            recipes = new Dictionary<string, Recipe>();
+
+            recipeItemTypes = new Dictionary<string, List<int>>();
+            recipes = new Dictionary<string, int>();
 
             LoadData();
         }
@@ -53,17 +58,10 @@ namespace PlantKitty.Scripts.Data
         }
         private void LoadItemData()
         {
-            if (File.Exists(ItemDataPath))
+            List<Item> itemList = new List<Item>();
+            if (!File.Exists(ItemDataPath))
             {
-                List<Item> loadedItems = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(ItemDataPath));
-                foreach (Item item in loadedItems)
-                {
-                    items.Add(item.name, item);
-                }
-                Console.WriteLine("Item data loaded!");
-            } else
-            {
-                List<Item> generatedItems = new List<Item>()
+                itemList = new List<Item>()
                 {
                     new Item("Material")
                     {
@@ -74,24 +72,24 @@ namespace PlantKitty.Scripts.Data
                     new Consumable("Consumable", true, new Recover(), new Replenish())
                 };
 
-                string json = JsonConvert.SerializeObject(generatedItems);
+                string json = JsonConvert.SerializeObject(itemList);
                 File.WriteAllText(ItemDataPath, json);
                 Console.WriteLine("Created test ItemData.json!");
+            } else 
+                itemList = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(ItemDataPath));
+
+            foreach (Item item in itemList)
+            {
+                items.Add(item.name, item);
             }
+            Console.WriteLine("Item data loaded!");
         }
         private void LoadWorldData()
         {
-            if (File.Exists(WorldDataPath))
+            List<Field> fieldList = new List<Field>();
+            if (!File.Exists(WorldDataPath))
             {
-                List<Field> loadedFields = JsonConvert.DeserializeObject<List<Field>>(File.ReadAllText(WorldDataPath));
-                foreach (Field field in loadedFields)
-                {
-                    fields.Add(field.name, field);
-                }
-                Console.WriteLine("World data loaded!");
-            } else
-            {
-                List<Field> generatedFields = new List<Field>()
+                fieldList = new List<Field>()
                 {
                     new Field()
                     {
@@ -109,24 +107,24 @@ namespace PlantKitty.Scripts.Data
                     }
                 };
 
-                string json = JsonConvert.SerializeObject(generatedFields);
+                string json = JsonConvert.SerializeObject(fieldList);
                 File.WriteAllText(WorldDataPath, json);
                 Console.WriteLine("Created test WorldData.json!");
+            } else
+                fieldList = JsonConvert.DeserializeObject<List<Field>>(File.ReadAllText(WorldDataPath));
+
+            foreach (Field field in fieldList)
+            {
+                fields.Add(field.name, field);
             }
+            Console.WriteLine("World data loaded!");
         }
         private void LoadMonsterData()
         {
-            if (File.Exists(MonsterDataPath))
+            List<Monster> monsterList = new List<Monster>();
+            if (!File.Exists(MonsterDataPath))
             {
-                List<Monster> loadedMonsters = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText(MonsterDataPath));
-                foreach (Monster monster in loadedMonsters)
-                {
-                    monsters.Add(monster.name, monster);
-                }
-                Console.WriteLine("Monster data loaded!");
-            } else
-            {
-                List<Monster> generatedMonsters = new List<Monster>()
+                monsterList = new List<Monster>()
                 {
                     new Monster()
                     {
@@ -143,25 +141,28 @@ namespace PlantKitty.Scripts.Data
                     }
                 };
 
-                string json = JsonConvert.SerializeObject(generatedMonsters);
+                string json = JsonConvert.SerializeObject(monsterList);
                 File.WriteAllText(MonsterDataPath, json);
                 Console.WriteLine("Created MonsterData.json!");
+            } else
+                monsterList = JsonConvert.DeserializeObject<List<Monster>>(File.ReadAllText(MonsterDataPath));
+
+            foreach (Monster monster in monsterList)
+            {
+                monsters.Add(monster.name, monster);
             }
+            Console.WriteLine("Monster data loaded!");
         }
         private void LoadRecipeData()
         {
             if (File.Exists(RecipeDataPath))
             {
-                List<Recipe> loadedRecipes = JsonConvert.DeserializeObject<List<Recipe>>(File.ReadAllText(RecipeDataPath));
-                foreach (Recipe recipe in loadedRecipes)
-                {
-                    recipes.Add(recipe.product, recipe);
-                }
+                allRecipes = JsonConvert.DeserializeObject<List<Recipe>>(File.ReadAllText(RecipeDataPath));
                 Console.WriteLine("Recipe data loaded!");
             }
             else
             {
-                List<Recipe> generatedRecipes = new List<Recipe>()
+                allRecipes = new List<Recipe>()
                 {
                     new Recipe()
                     {
@@ -178,9 +179,23 @@ namespace PlantKitty.Scripts.Data
                     }
                 };
 
-                string json = JsonConvert.SerializeObject(generatedRecipes);
+                string json = JsonConvert.SerializeObject(allRecipes);
                 File.WriteAllText(RecipeDataPath, json);
                 Console.WriteLine("Created RecipeData.json!");
+            }
+
+            allRecipes.Sort((x, y) => string.Compare(x.product, y.product));
+            for (int i = allRecipes.Count-1; i >= 0; i--)
+            {
+                int index = i;
+                Item item = GetItem(allRecipes[index].product);
+                if (item == null) continue;
+
+                string itemType = item.GetType().Name.ToLower();
+                if (!recipeItemTypes.ContainsKey(itemType)) recipeItemTypes.Add(itemType, new List<int>());
+                recipeItemTypes[itemType].Add(index);
+
+                if (!recipes.ContainsKey(item.name)) recipes.Add(item.name, index);
             }
         }
 
@@ -234,6 +249,22 @@ namespace PlantKitty.Scripts.Data
         {
             if (monsters.ContainsKey(monsterName))
                 return new Monster(monsters[monsterName]);
+            return null;
+        }
+        public List<Recipe> GetRecipes(string itemType)
+        {
+            if (!recipeItemTypes.ContainsKey(itemType)) return null;
+
+            List<Recipe> recipeList = new List<Recipe>();
+            foreach (int i in recipeItemTypes[itemType])
+                recipeList.Add(allRecipes[i]);
+
+            return recipeList;
+        }
+        public Recipe GetRecipe(string itemName)
+        {
+            if (recipes.ContainsKey(itemName))
+                return allRecipes[ recipes[itemName] ];
             return null;
         }
     }
