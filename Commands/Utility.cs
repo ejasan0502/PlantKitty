@@ -90,7 +90,8 @@ namespace PlantKitty.Commands
                                $"ATK: {player.currentStats.ATK}\n" +
                                $"DEF: {player.currentStats.DEF}\n" +
                                $"ACC: {player.currentStats.ACC}\n" +
-                               $"EVA: {player.currentStats.EVA}";
+                               $"EVA: {player.currentStats.EVA}\n" +
+                               $"SPD: {player.currentStats.SPD}";
 
                 EmbedBuilder builder = new EmbedBuilder()
                     .WithTitle($"{Context.User.Username}'s Info")

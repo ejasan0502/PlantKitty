@@ -25,6 +25,7 @@ namespace PlantKitty.Scripts.Data
                 if (stats.DEF != 0) builder.Append($"DEF: {stats.DEF}\n");
                 if (stats.ACC != 0) builder.Append($"ACC: {stats.ACC}\n");
                 if (stats.EVA != 0) builder.Append($"EVA: {stats.EVA}");
+                if (stats.SPD != 0) builder.Append($"SPD: {stats.SPD}");
 
                 return builder.ToString();
             }

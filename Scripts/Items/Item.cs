@@ -51,6 +51,12 @@ namespace PlantKitty.Scripts.Data
         }
     }
 
+    public enum ItemType
+    {
+        item,
+        consumable,
+        equip
+    }
     public enum Tier
     {
         common = 10,

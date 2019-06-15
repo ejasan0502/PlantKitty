@@ -17,6 +17,25 @@ namespace PlantKitty.Scripts.Data
             slots = new List<InventoryItem>();
         }
 
+        private InventoryItem GetSlot(string itemName)
+        {
+            foreach (InventoryItem slot in slots)
+                if (slot != null && slot.item.name == itemName)
+                    return slot;
+            return null;
+        }
+        private InventoryItem GetSlot(string itemName, out int index)
+        {
+            for (int i = 0; i < slots.Count; i++)
+                if (slots[i] != null && slots[i].item.name == itemName)
+                {
+                    index = i;
+                    return slots[i];
+                }
+
+            index = -1;
+            return null;
+        }
         private InventoryItem GetSlot(Item item)
         {
             foreach (InventoryItem slot in slots)
@@ -41,6 +60,11 @@ namespace PlantKitty.Scripts.Data
             return null;
         }
 
+        public bool HasEnoughOf(string itemName, int amountNeeded)
+        {
+            InventoryItem slot = GetSlot(itemName);
+            return slot != null && slot.amount >= amountNeeded;
+        }
         public void AddItem(Item item, int amount)
         {
             InventoryItem slot = GetSlot(item);
@@ -61,6 +85,19 @@ namespace PlantKitty.Scripts.Data
             {
                 slot.amount -= amount;
                 if ( slot.amount < 1 )
+                {
+                    slots.RemoveAt(index);
+                }
+            }
+        }
+        public void RemoveItem(string itemName, int amount)
+        {
+            int index;
+            InventoryItem slot = GetSlot(itemName, out index);
+            if (slot != null)
+            {
+                slot.amount -= amount;
+                if (slot.amount < 1)
                 {
                     slots.RemoveAt(index);
                 }

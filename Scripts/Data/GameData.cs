@@ -14,10 +14,12 @@ namespace PlantKitty.Scripts.Data
         private const string ItemDataPath = "Resources/ItemData.json";
         private const string WorldDataPath = "Resources/WorldData.json";
         private const string MonsterDataPath = "Resources/MonsterData.json";
+        private const string RecipeDataPath = "Resources/RecipeData.json";
 
         private Dictionary<string, Item> items;
         private Dictionary<string, Field> fields;
         private Dictionary<string, Monster> monsters;
+        private Dictionary<string, Recipe> recipes;
 
         private static GameData instance;
         public static GameData Instance
@@ -37,6 +39,7 @@ namespace PlantKitty.Scripts.Data
             items = new Dictionary<string, Item>();
             fields = new Dictionary<string, Field>();
             monsters = new Dictionary<string, Monster>();
+            recipes = new Dictionary<string, Recipe>();
 
             LoadData();
         }
@@ -46,6 +49,7 @@ namespace PlantKitty.Scripts.Data
             LoadItemData();
             LoadWorldData();
             LoadMonsterData();
+            LoadRecipeData();
         }
         private void LoadItemData()
         {
@@ -142,6 +146,41 @@ namespace PlantKitty.Scripts.Data
                 string json = JsonConvert.SerializeObject(generatedMonsters);
                 File.WriteAllText(MonsterDataPath, json);
                 Console.WriteLine("Created MonsterData.json!");
+            }
+        }
+        private void LoadRecipeData()
+        {
+            if (File.Exists(RecipeDataPath))
+            {
+                List<Recipe> loadedRecipes = JsonConvert.DeserializeObject<List<Recipe>>(File.ReadAllText(RecipeDataPath));
+                foreach (Recipe recipe in loadedRecipes)
+                {
+                    recipes.Add(recipe.product, recipe);
+                }
+                Console.WriteLine("Recipe data loaded!");
+            }
+            else
+            {
+                List<Recipe> generatedRecipes = new List<Recipe>()
+                {
+                    new Recipe()
+                    {
+                        product = "Lesser HP Potion",
+                        time = 10,
+                        materials = new List<string>()
+                        {
+                            "Gooseberries"
+                        },
+                        amounts = new List<int>()
+                        {
+                            1
+                        }
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(generatedRecipes);
+                File.WriteAllText(RecipeDataPath, json);
+                Console.WriteLine("Created RecipeData.json!");
             }
         }
 
