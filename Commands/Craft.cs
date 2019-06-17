@@ -38,6 +38,7 @@ namespace PlantKitty.Commands
                 {
                     List<Recipe> recipes = GameData.Instance.GetRecipes(itemType);
                     if (recipes == null) return;
+                    recipes.Sort((x, y) => string.Compare(x.product, y.product));
 
                     EmbedBuilder builder = new EmbedBuilder()
                         .WithTitle($"Displaying first 10 recipes of {itemType}");
@@ -47,7 +48,7 @@ namespace PlantKitty.Commands
                     {
                         if (i >= 10) break;
 
-                        builder.AddField(recipes[i].product, recipes[i].Ingredients, count < 3);
+                        builder.AddField(recipes[i].product, recipes[i].Ingredients, count < 4);
                         count++;
                         if (count > 3) count = 0; 
                     }
