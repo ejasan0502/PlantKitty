@@ -66,7 +66,7 @@ namespace PlantKitty.Scripts.Actions
                 // Remove materials from inventory
                 for (int i = 0; i < recipe.materials.Count; i++)
                 {
-                    inventory.RemoveItem(recipe.materials[i], i < recipe.amounts.Count ? recipe.amounts[i] : 1);
+                    inventory.RemoveItem(recipe.materials[i], (i < recipe.amounts.Count ? recipe.amounts[i] : 1)*amount);
                 }
             }
         }
@@ -86,15 +86,17 @@ namespace PlantKitty.Scripts.Actions
                     remainder = i;
                     amount = (int)Math.Floor(timeAccumulated / craftQueue[i].craftTime);
                     timeNeeded = craftQueue[i].craftTime * amount;
-
-                    craftQueue[i].amount -= amount;
                 }
 
-                Item item = GameData.Instance.GetItem(craftQueue[i].itemName);
-                if (item == null) continue;
+                if (amount > 0)
+                {
+                    craftQueue[i].amount -= amount;
 
-                timeAccumulated -= timeNeeded;
-                inventory.AddItem(item, amount);
+                    Item item = GameData.Instance.GetItem(craftQueue[i].itemName);
+                    timeAccumulated -= timeNeeded;
+                    inventory.AddItem(item, amount);
+                    gained.Add(new InventoryItem(item, amount));
+                }
 
                 if (remainder != -1) break;
             }

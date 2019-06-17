@@ -43,6 +43,7 @@ namespace PlantKitty.Commands
                     {
                         player.Equip(equipItem.item as Equip);
                         player.inventory.RemoveItem(equipItem.item, 1);
+                        PlayerData.Instance.SavePlayer(player.id);
                     }
                 }
             }
@@ -89,6 +90,7 @@ namespace PlantKitty.Commands
                             await ReplyAsync($"{Context.User.Mention}. You used 1 {itemName}!");
                         } else
                             await ReplyAsync($"{Context.User.Mention}. {itemName} cannot be used on you!");
+                        PlayerData.Instance.SavePlayer(player.id);
                     }
                     else
                     {
@@ -114,6 +116,7 @@ namespace PlantKitty.Commands
                         player.inventory.RemoveItem(inventoryItem.item, inventoryItem.amount);
                     else
                         player.inventory.RemoveItem(inventoryItem.item, amount);
+                    PlayerData.Instance.SavePlayer(player.id);
                 }
             }
             else

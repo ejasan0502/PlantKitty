@@ -46,6 +46,7 @@ namespace PlantKitty.Commands
 
                     player.SetTask(new Traveling(fieldName));
                     await ReplyAsync($"{Context.User.Username} travels to {fieldName}! ETA: 1 HR");
+                    PlayerData.Instance.SavePlayer(player.id);
                 } else
                 {
                     EmbedBuilder builder = new EmbedBuilder()

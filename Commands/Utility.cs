@@ -28,14 +28,19 @@ namespace PlantKitty.Commands
                     if (player.task is Crafting)
                     {
                         Crafting crafting = player.task as Crafting;
-                        EmbedBuilder builder = new EmbedBuilder();
 
                         List<InventoryItem> craftedItems = crafting.Check(player, player.inventory);
-                        foreach (InventoryItem slot in craftedItems)
+                        if (craftedItems.Count > 0)
                         {
-                            builder.AddField(slot.item.name + " x" + slot.amount, slot.item.Description, true);
+                            EmbedBuilder builder = new EmbedBuilder()
+                                .WithTitle("Crafted...");
+                            foreach (InventoryItem slot in craftedItems)
+                            {
+                                builder.AddField(slot.item.name + " x" + slot.amount, slot.item.Description, true);
+                            }
+                            await ReplyAsync(null, false, builder.Build());
+                            PlayerData.Instance.SavePlayer(player.id);
                         }
-                        await ReplyAsync(null, false, builder.Build());
 
                         // Remove task if no more recipes in crafting queue
                         if (crafting.craftQueue.Count < 1)
@@ -68,6 +73,7 @@ namespace PlantKitty.Commands
                 player.EndTask(Context.User.Username, builder);
 
                 await ReplyAsync(null, false, builder.Build());
+                PlayerData.Instance.SavePlayer(player.id);
             } else
             {
                 await ReplyAsync(log);
@@ -131,6 +137,7 @@ namespace PlantKitty.Commands
                     if (player.pointsAvailable < amount) amount = player.pointsAvailable;
                     player.AddAttribute(attribute, amount);
                     await ReplyAsync($"{Context.User.Mention}. {attribute} increased by {amount}");
+                    PlayerData.Instance.SavePlayer(player.id);
                 } else if (attribute == "")
                 {
                     string info = $"STR: {player.attributes.STR}\n" +

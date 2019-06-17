@@ -34,6 +34,7 @@ namespace PlantKitty.Commands
                 player.SetTask(task);
 
                 log = $"{Context.User.Mention} {task.Description()}";
+                PlayerData.Instance.SavePlayer(player.id);
             }
 
             await ReplyAsync(log);

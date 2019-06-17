@@ -75,8 +75,10 @@ namespace PlantKitty.Commands
                 {
                     Crafting crafting;
                     if (player.task == null)
+                    {
                         crafting = new Crafting();
-                    else if (player.task is Crafting)
+                        player.SetTask(crafting);
+                    } else if (player.task is Crafting)
                         crafting = player.task as Crafting;
                     else
                     {
@@ -85,6 +87,8 @@ namespace PlantKitty.Commands
                     }
 
                     crafting.AddCraft(recipe, amount, player.inventory);
+                    await ReplyAsync($"{Context.User.Mention}. Added {amount} {itemName} to crafting queue!");
+                    PlayerData.Instance.SavePlayer(player.id);
                 }
                 else
                     await ReplyAsync($"{Context.User.Mention}. Not enough materials!");
