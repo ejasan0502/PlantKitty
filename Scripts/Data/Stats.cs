@@ -27,6 +27,16 @@ namespace PlantKitty.Scripts.Data
             EVA = 0;
             SPD = 0;
         }
+        public Stats(Stats stats)
+        {
+            HP = stats.HP;
+            MP = stats.MP;
+            ATK = stats.ATK;
+            DEF = stats.DEF;
+            ACC = stats.ACC;
+            EVA = stats.EVA;
+            SPD = stats.SPD;
+        }
         public Stats(string data)
         {
             HP = 0;

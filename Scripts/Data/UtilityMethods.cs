@@ -13,5 +13,10 @@ namespace PlantKitty.Scripts.Data
             if (val > 0) return "+" + val;
             return val+"";
         }
+        public static string ToSignString(float val)
+        {
+            if (val > 0) return "+" + val;
+            return val + "";
+        }
     }
 }

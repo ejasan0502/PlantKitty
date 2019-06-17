@@ -30,6 +30,7 @@ namespace PlantKitty.Scripts.Data
 
         private float maxExp;
         private bool leveledUp;
+        private List<Buff> buffs;
 
         public Player()
         {
@@ -50,10 +51,11 @@ namespace PlantKitty.Scripts.Data
 
             equipment = new Equip[System.Enum.GetNames(typeof(EquipType)).Length];
             inventory = new Inventory(30);
+            buffs = new List<Buff>();
 
             CalculateStats();
             CalculateMaxStats();
-            currentStats = maxStats;
+            currentStats = new Stats(maxStats);
         }
 
         private void CalculateMaxExp()
@@ -89,7 +91,8 @@ namespace PlantKitty.Scripts.Data
                 ATK = 1 + (positive.STR + positive.INT) / 2.00f - negative.DEX,
                 DEF = 0 - negative.AGI - negative.INT,
                 ACC = 70 + positive.DEX - negative.STR,
-                EVA = 0 + positive.AGI - negative.VIT
+                EVA = 0 + positive.AGI - negative.VIT,
+                SPD = 0 + positive.AGI - negative.STR
             };
         }
         private int CalculatePositiveBaseStat(int att)
@@ -112,6 +115,13 @@ namespace PlantKitty.Scripts.Data
             {
                 if (e != null)
                     maxStats += e.stats;
+            }
+        }
+        private void ApplyBuffs()
+        {
+            foreach (Buff b in buffs)
+            {
+                b.Apply(this);
             }
         }
         private void IncreaseAttributes()
@@ -147,13 +157,14 @@ namespace PlantKitty.Scripts.Data
             CalculateStats();
             CalculateMaxStats();
 
+            currentStats = new Stats(maxStats);
             pointsAvailable += 5;
             leveledUp = true;
         }
         public void CalculateMaxStats()
         {
             ApplyEquipmentStats();
-            // Apply buffs
+            ApplyBuffs();
         }
         public void AddAttribute(string attribute, int amount)
         {
@@ -255,5 +266,47 @@ namespace PlantKitty.Scripts.Data
             }
         }
 
+        public bool HasBuff(Buff buff)
+        {
+            foreach (Buff b in buffs)
+            {
+                if (b.GetType() == buff.GetType())
+                    return true;
+            }
+            return false;
+        }
+        public bool AddBuff(Buff buff)
+        {
+            if (!HasBuff(buff))
+            {
+                buffs.Add(buff);
+                CalculateStats();
+                CalculateMaxStats();
+
+                return true;
+            }
+            return false;
+        }
+        public void CheckBuffs()
+        {
+            if (buffs.Count > 0)
+            {
+                bool recalculateStats = false;
+                for (int i = buffs.Count - 1; i >= 0; i--)
+                {
+                    if (buffs[i].IsDone)
+                    {
+                        buffs.RemoveAt(i);
+                        recalculateStats = true;
+                    }
+                }
+
+                if (recalculateStats)
+                {
+                    CalculateStats();
+                    CalculateMaxStats();
+                }
+            }
+        }
     }
 }
