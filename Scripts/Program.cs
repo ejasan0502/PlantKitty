@@ -35,7 +35,6 @@ namespace PlantKitty
                 settings.Formatting = Formatting.Indented;
                 settings.Converters.Add(new StatsJsonConverter());
                 settings.Converters.Add(new AttributesJsonConverter());
-                settings.Converters.Add(new ConsumePropertyJsonConverter());
                 return settings;
             };
 

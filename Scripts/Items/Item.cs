@@ -66,6 +66,7 @@ namespace PlantKitty.Scripts.Data
     }
     public enum LootCategory
     {
+        none,
         foraging,
         hunting,
         fishing,

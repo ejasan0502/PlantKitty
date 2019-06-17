@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PlantKitty.Scripts.Data.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +11,7 @@ namespace PlantKitty.Scripts.Data
     public class Consumable : Item
     {
         public bool friendly;
-        public List<ConsumeProperty> properties;
+        [JsonConverter(typeof(ListConsumePropertyJsonConverter))] public List<ConsumeProperty> properties;
 
         public override string Description
         {
