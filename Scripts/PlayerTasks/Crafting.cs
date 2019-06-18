@@ -24,7 +24,7 @@ namespace PlantKitty.Scripts.Actions
 
         public override string Description()
         {
-            string description = "Crafting queue: ";
+            string description = "";
             if (craftQueue.Count > 0)
             {
                 for (int i = 0; i < craftQueue.Count; i++)
@@ -101,10 +101,17 @@ namespace PlantKitty.Scripts.Actions
                 if (remainder != -1) break;
             }
 
+            // Reset time
+            if (timeAccumulated > 0)
+            {
+                start = DateTime.UtcNow;
+                start.AddMinutes(-timeAccumulated);
+            }
+
             // Clear crafting queue
             for (int i = craftQueue.Count - 1; i >= 0; i--)
             {
-                if (i > remainder || i == remainder && craftQueue[i].amount > 0) continue;
+                if (i > remainder || i <= remainder && craftQueue[i].amount > 0) continue;
 
                 craftQueue.RemoveAt(i);
             }

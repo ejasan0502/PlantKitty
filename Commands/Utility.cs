@@ -24,7 +24,6 @@ namespace PlantKitty.Commands
             {
                 if (player.task != null)
                 {
-                    log = Context.User.Username + ". " + player.task.Description();
                     if (player.task is Crafting)
                     {
                         Crafting crafting = player.task as Crafting;
@@ -46,6 +45,7 @@ namespace PlantKitty.Commands
                         if (crafting.craftQueue.Count < 1)
                             player.SetTask(null);
                     }
+                    log = Context.User.Mention + ". Your crafting queue:" + player.task.Description();
                 } else
                     log = "You aren't doing anything.";
             } 
