@@ -42,7 +42,15 @@ namespace PlantKitty.Scripts.Data.Converters
                             break;
                         case "StatsBuff_CP":
                             properties.Add(new StatsBuff_CP(vals));
-                            break; 
+                            break;
+                        case "JobChange":
+                            param = vals[1].Split('>');
+                            JobChange jobChange = new JobChange()
+                            {
+                                job = param[1]
+                            };
+                            properties.Add(jobChange);
+                            break;
                     }
                 }
             }

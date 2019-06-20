@@ -15,6 +15,7 @@ namespace PlantKitty.Scripts.Data
         private const string WorldDataPath = "Resources/WorldData.json";
         private const string MonsterDataPath = "Resources/MonsterData.json";
         private const string RecipeDataPath = "Resources/RecipeData.json";
+        private const string JobDataPath = "Resources/JobData.json";
 
         private Dictionary<string, Item> items;
         private Dictionary<string, Field> fields;
@@ -23,6 +24,8 @@ namespace PlantKitty.Scripts.Data
         private List<Recipe> allRecipes;
         private Dictionary<string, List<int>> recipeItemTypes;
         private Dictionary<string, int> recipes;
+
+        private Dictionary<string, JobClass> jobs;
 
         private static GameData instance;
         public static GameData Instance
@@ -46,6 +49,8 @@ namespace PlantKitty.Scripts.Data
             recipeItemTypes = new Dictionary<string, List<int>>();
             recipes = new Dictionary<string, int>();
 
+            jobs = new Dictionary<string, JobClass>();
+
             LoadData();
         }
 
@@ -55,6 +60,7 @@ namespace PlantKitty.Scripts.Data
             LoadWorldData();
             LoadMonsterData();
             LoadRecipeData();
+            LoadJobData();
         }
         private void LoadItemData()
         {
@@ -197,6 +203,38 @@ namespace PlantKitty.Scripts.Data
 
                 if (!recipes.ContainsKey(item.name)) recipes.Add(item.name, index);
             }
+
+            Console.WriteLine("Recipe data loaded!");
+        }
+        private void LoadJobData()
+        {
+            List<JobClass> jobList = new List<JobClass>();
+            if (File.Exists(JobDataPath))
+            {
+                jobList = JsonConvert.DeserializeObject<List<JobClass>>(File.ReadAllText(JobDataPath));
+            } else
+            {
+                jobList = new List<JobClass>()
+                {
+                    new JobClass()
+                    {
+                        name = "Novice",
+                        description = "You are a nobody.",
+                        additive = null
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(jobList);
+                File.WriteAllText(JobDataPath, json);
+            }
+
+            foreach (JobClass job in jobList)
+            {
+                if (!jobs.ContainsKey(job.name))
+                    jobs.Add(job.name, job);
+            }
+
+            Console.WriteLine("Job data loaded!");
         }
 
         public Field GetField(string fieldName)
@@ -266,6 +304,12 @@ namespace PlantKitty.Scripts.Data
             if (recipes.ContainsKey(itemName))
                 return allRecipes[ recipes[itemName] ];
             return null;
+        }
+        public JobClass GetJob(string job)
+        {
+            if (jobs.ContainsKey(job))
+                return jobs[job];
+            return default;
         }
     }
 }

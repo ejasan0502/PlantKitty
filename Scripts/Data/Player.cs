@@ -17,6 +17,7 @@ namespace PlantKitty.Scripts.Data
 
         public PlayerTask task;
         public string field;
+        public JobClass job;
 
         public int level;
         public float exp;
@@ -39,6 +40,12 @@ namespace PlantKitty.Scripts.Data
 
             task = null;
             field = "Trainee Island";
+            job = new JobClass()
+            {
+                name = "Novice",
+                description = "You are a nobody.",
+                additive = null
+            };
 
             level = 1;
             exp = 0f;
@@ -128,9 +135,18 @@ namespace PlantKitty.Scripts.Data
         {
             lastAttributes = new Attributes(attributes.ToString());
 
-            List<string> att = attributes.GetType().GetFields().Select(a => a.Name).ToList();
-            Random random = new Random();
-            AddAttribute(att[random.Next(0, att.Count)], 1);
+            if (job.additive == null)
+            {
+                List<string> att = attributes.GetType().GetFields().Select(a => a.Name).ToList();
+                Random random = new Random();
+                AddAttribute(att[random.Next(0, att.Count)], 1, false);
+            } else
+            {
+                attributes += job.additive;
+
+                CalculateStats();
+                CalculateMaxStats();
+            }
         }
 
         public void SetTask(PlayerTask task)
@@ -146,6 +162,18 @@ namespace PlantKitty.Scripts.Data
             task = null;
 
             PlayerData.Instance.SaveData();
+        }
+        public void SetJobClass(JobClass job)
+        {
+            this.job = job;
+
+            if (this.job.additive != null)
+            {
+                attributes += this.job.additive;
+
+                CalculateStats();
+                CalculateMaxStats();
+            }
         }
 
         public void LevelUp()
@@ -166,14 +194,14 @@ namespace PlantKitty.Scripts.Data
             ApplyEquipmentStats();
             ApplyBuffs();
         }
-        public void AddAttribute(string attribute, int amount)
+        public void AddAttribute(string attribute, int amount, bool subtractPoint = true)
         {
             FieldInfo field = attributes.GetType().GetField(attribute);
             if (field == null) return;
 
             int amt = (int)field.GetValue(attributes) + amount;
             field.SetValue(attributes, amt);
-            pointsAvailable -= amount;
+            if (subtractPoint) pointsAvailable -= amount;
 
             CalculateStats();
             CalculateMaxStats();

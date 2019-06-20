@@ -44,8 +44,11 @@ namespace PlantKitty.Commands
                         // Remove task if no more recipes in crafting queue
                         if (crafting.craftQueue.Count < 1)
                             player.SetTask(null);
+
+                        log = Context.User.Mention + ". Your crafting queue:" + player.task.Description();
                     }
-                    log = Context.User.Mention + ". Your crafting queue:" + player.task.Description();
+                    else
+                        log = Context.User.Mention + "." + player.task.Description();
                 } else
                     log = "You aren't doing anything.";
             } 
