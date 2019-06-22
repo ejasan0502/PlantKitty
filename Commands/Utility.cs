@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using Newtonsoft.Json;
 using PlantKitty.Scripts.Actions;
 using PlantKitty.Scripts.Data;
+using PlantKitty.Scripts.Skills;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -127,7 +128,6 @@ namespace PlantKitty.Commands
             } else 
                 await ReplyAsync(log);
         }
-
         [Command("attributes")]
         public async Task Checkattributes(string attribute = "", int amount = 0)
         {
@@ -161,7 +161,6 @@ namespace PlantKitty.Commands
             else
                 await ReplyAsync(log);
         }
-
         [Command("equipment")]
         public async Task CheckEquipment()
         {
@@ -185,6 +184,31 @@ namespace PlantKitty.Commands
             else
                 await ReplyAsync(log);
         }
+        [Command("skills")]
+        public async Task CheckSkills()
+        {
+            Player player;
+            string log;
+            if (CheckPlayer(out player, out log))
+            {
+
+                EmbedBuilder builder = new EmbedBuilder()
+                    .WithTitle($"{Context.User.Username}'s Skill Library");
+
+                int count = 0;
+                foreach (Skill s in player.skills)
+                {
+                    builder.AddField(s.name, s.Description, count < 4);
+                    count++;
+                    if (count > 3) count = 0;
+                }
+
+                await ReplyAsync(null, false, builder.Build());
+            }
+            else
+                await ReplyAsync(log);
+        }
+
         [Command("save")]
         public async Task SavePlayer()
         {
@@ -205,5 +229,6 @@ namespace PlantKitty.Commands
             PlayerData.Instance.NewPlayer(Context.User.Id, Context.User.Username);
             await ReplyAsync($"{Context.User.Username} has started over!");
         }
+
     }
 }

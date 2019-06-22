@@ -1,5 +1,9 @@
 ﻿using Newtonsoft.Json;
 using PlantKitty.Scripts.Combat;
+using PlantKitty.Scripts.Skills;
+using PlantKitty.Scripts.Skills.SkillProperties;
+using PlantKitty.Scripts.Statuses;
+using PlantKitty.Scripts.Statuses.StatusProperties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +20,8 @@ namespace PlantKitty.Scripts.Data
         private const string MonsterDataPath = "Resources/MonsterData.json";
         private const string RecipeDataPath = "Resources/RecipeData.json";
         private const string JobDataPath = "Resources/JobData.json";
+        private const string SkillDataPath = "Resources/SkillData.json";
+        private const string StatusDataPath = "Resources/StatusData.json";
 
         private Dictionary<string, Item> items;
         private Dictionary<string, Field> fields;
@@ -26,6 +32,8 @@ namespace PlantKitty.Scripts.Data
         private Dictionary<string, int> recipes;
 
         private Dictionary<string, JobClass> jobs;
+        private Dictionary<string, Skill> skills;
+        private Dictionary<string, Status> statuses;
 
         private static GameData instance;
         public static GameData Instance
@@ -50,6 +58,8 @@ namespace PlantKitty.Scripts.Data
             recipes = new Dictionary<string, int>();
 
             jobs = new Dictionary<string, JobClass>();
+            skills = new Dictionary<string, Skill>();
+            statuses = new Dictionary<string, Status>();
 
             LoadData();
         }
@@ -61,7 +71,10 @@ namespace PlantKitty.Scripts.Data
             LoadMonsterData();
             LoadRecipeData();
             LoadJobData();
+            LoadSkillData();
+            LoadStatusData();
         }
+
         private void LoadItemData()
         {
             List<Item> itemList = new List<Item>();
@@ -236,6 +249,78 @@ namespace PlantKitty.Scripts.Data
 
             Console.WriteLine("Job data loaded!");
         }
+        private void LoadSkillData()
+        {
+            List<Skill> loadedSkills;
+            if (File.Exists(SkillDataPath))
+            {
+                loadedSkills = JsonConvert.DeserializeObject<List<Skill>>(SkillDataPath);
+            } else
+            {
+                loadedSkills = new List<Skill>()
+                {
+                    new Skill()
+                    {
+                        name = "Skill 1",
+                        isFriendly = false,
+                        isAoe = false,
+                        properties = new List<SkillProperty>()
+                        {
+                            new Damage_SP()
+                            {
+                                percent = false,
+                                inflict = 1
+                            }
+                        }
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(loadedSkills);
+                File.WriteAllText(SkillDataPath, json);
+
+                Console.WriteLine("Created skill data!");
+            }
+
+            foreach (Skill s in loadedSkills)
+            {
+                if (!skills.ContainsKey(s.name))
+                    skills.Add(s.name, s);
+            }
+            Console.WriteLine("Skill data loaded!");
+        }
+        private void LoadStatusData()
+        {
+            List<Status> statusList;
+            if (File.Exists(StatusDataPath))
+            {
+                statusList = JsonConvert.DeserializeObject<List<Status>>(StatusDataPath);
+            } else
+            {
+                statusList = new List<Status>()
+                {
+                    new Status()
+                    {
+                        name = "Status 1",
+                        continuous = false,
+                        duration = 1,
+                        properties = new List<StatusProperty>()
+                        {
+                            new DoT_StP()
+                            {
+                                percent = false,
+                                inflict = 1f
+                            }
+                        }
+                    }
+                };
+
+                string json = JsonConvert.SerializeObject(statusList);
+                File.WriteAllText(StatusDataPath, json);
+                Console.WriteLine("Created status data loaded!");
+            }
+
+            Console.WriteLine("Status data loaded!");
+        }
 
         public Field GetField(string fieldName)
         {
@@ -309,6 +394,18 @@ namespace PlantKitty.Scripts.Data
         {
             if (jobs.ContainsKey(job))
                 return jobs[job];
+            return default;
+        }
+        public Skill GetSkill(string skill)
+        {
+            if (skills.ContainsKey(skill))
+                return skills[skill];
+            return null;
+        }
+        public Status GetStatus(string status)
+        {
+            if (statuses.ContainsKey(status))
+                return statuses[status];
             return default;
         }
     }

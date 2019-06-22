@@ -1,6 +1,9 @@
 ﻿using Discord;
 using Newtonsoft.Json;
 using PlantKitty.Scripts.Actions;
+using PlantKitty.Scripts.Data.Converters;
+using PlantKitty.Scripts.Skills;
+using PlantKitty.Scripts.Statuses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +21,12 @@ namespace PlantKitty.Scripts.Data
         public PlayerTask task;
         public string field;
         public JobClass job;
+        [JsonConverter(typeof(ListSkillJsonConverter))] public List<Skill> skills;
 
         public int level;
         public float exp;
         public int pointsAvailable;
+
         public Attributes lastAttributes;
         public Attributes attributes;
         public Stats baseStats;
@@ -46,6 +51,7 @@ namespace PlantKitty.Scripts.Data
                 description = "You are a nobody.",
                 additive = null
             };
+            skills = new List<Skill>();
 
             level = 1;
             exp = 0f;
@@ -59,6 +65,7 @@ namespace PlantKitty.Scripts.Data
             equipment = new Equip[System.Enum.GetNames(typeof(EquipType)).Length];
             inventory = new Inventory(30);
             buffs = new List<Buff>();
+            statuses = new List<Status>();
 
             CalculateStats();
             CalculateMaxStats();
@@ -102,6 +109,12 @@ namespace PlantKitty.Scripts.Data
                 SPD = 0 + positive.AGI - negative.STR
             };
         }
+        private void CalculateMaxStats()
+        {
+            ApplyEquipmentStats();
+            ApplyBuffs();
+            ApplyStatuses();
+        }
         private int CalculatePositiveBaseStat(int att)
         {
             // Positive = (100x)^(1/2)
@@ -129,6 +142,14 @@ namespace PlantKitty.Scripts.Data
             foreach (Buff b in buffs)
             {
                 b.Apply(this);
+            }
+        }
+        private void ApplyStatuses()
+        {
+            foreach (Status status in statuses)
+            {
+                if (!status.continuous)
+                    status.Apply(this);
             }
         }
         private void IncreaseAttributes()
@@ -188,11 +209,6 @@ namespace PlantKitty.Scripts.Data
             currentStats = new Stats(maxStats);
             pointsAvailable += 5;
             leveledUp = true;
-        }
-        public void CalculateMaxStats()
-        {
-            ApplyEquipmentStats();
-            ApplyBuffs();
         }
         public void AddAttribute(string attribute, int amount, bool subtractPoint = true)
         {
@@ -335,6 +351,13 @@ namespace PlantKitty.Scripts.Data
                     CalculateMaxStats();
                 }
             }
+        }
+        public bool HasSkill(string skillName)
+        {
+            foreach (Skill s in skills)
+                if (s.name == skillName)
+                    return true;
+            return false;
         }
     }
 }

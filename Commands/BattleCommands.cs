@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using PlantKitty.Scripts.Actions;
 using PlantKitty.Scripts.Combat;
 using PlantKitty.Scripts.Data;
+using PlantKitty.Scripts.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,6 +151,42 @@ namespace PlantKitty.Commands
 
                     await BattleManager.Instance.PerformBattle(battle, Context.Channel);
                 }
+            }
+            else if (log != "")
+                await ReplyAsync(log);
+        }
+
+        [Command("cast", RunMode = RunMode.Async)]
+        public async Task Cast(string skillName, int index)
+        {
+            Player player;
+            string log;
+
+            if (!IsPrivate(Context.Channel, out log))
+            {
+                await ReplyAsync(log);
+                return;
+            }
+
+            if (CheckPlayer(out player, out log) && IsInBattle(player) && player.HasSkill(skillName))
+            {
+                Battling task = player.task as Battling;
+                Battle battle = BattleManager.Instance.GetBattle(task.battleId);
+
+                Skill skill = GameData.Instance.GetSkill(skillName);
+                if (skill == null) return;
+
+                List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
+                if (!IsValidIndex(index, characters)) return;
+
+                Cast action;
+                if (skill.isAoe)
+                    action = new Cast(player, characters, skill);
+                else
+                    action = new Cast(player, characters[index], skill);
+                battle.AddAction(action);
+
+                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
             }
             else if (log != "")
                 await ReplyAsync(log);

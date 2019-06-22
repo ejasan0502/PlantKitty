@@ -223,7 +223,13 @@ namespace PlantKitty.Scripts.Combat
                 // Reset
                 battle.ClearActions();
 
-                // DIsplay update players info
+                // Apply status
+                foreach (Monster m in battle.monsters)
+                    m.CheckStatuses();
+                foreach (Player p in battle.players)
+                    p.CheckStatuses();
+
+                // Display update players info
                 await DisplayCharacters("Players", battle.players, channel);
 
                 // Display updated monsters info
