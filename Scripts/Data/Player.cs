@@ -29,6 +29,7 @@ namespace PlantKitty.Scripts.Data
 
         public Attributes lastAttributes;
         public Attributes attributes;
+        public Stats baseStats;
         public Stats stats;
 
         public Equip[] equipment;
@@ -56,6 +57,21 @@ namespace PlantKitty.Scripts.Data
                 }
             };
             skills = new List<Skill>();
+
+            baseStats = new Stats()
+            {
+                HP = 30,
+                MP = 10,
+                PATK = 1,
+                PDEF = 0,
+                MATK = 1,
+                MDEF = 0,
+                ACC = 70,
+                EVA = 0,
+                SPD = 0,
+                CRIT = 0,
+                CRITDMG = 1.1f
+            };
 
             level = 1;
             exp = 0f;
@@ -104,15 +120,17 @@ namespace PlantKitty.Scripts.Data
 
             stats = new Stats()
             {
-                HP = 30 + positive.VIT - negative.PSY,
-                MP = 10 + positive.PSY,
-                PATK = 1 + positive.STR - negative.DEX,
-                PDEF = 0 - negative.AGI - negative.INT,
-                MATK = 1 + positive.INT - negative.DEX,
-                MDEF = 0 - negative.VIT - negative.INT,
-                ACC = 70 + positive.DEX - negative.STR,
-                EVA = 0 + positive.AGI - negative.VIT,
-                SPD = 0 + positive.AGI - negative.STR
+                HP = baseStats.HP + positive.VIT - negative.PSY,
+                MP = baseStats.MP + positive.PSY,
+                PATK = baseStats.PATK + positive.STR - negative.DEX,
+                PDEF = baseStats.PDEF + positive.VIT - negative.AGI,
+                MATK = baseStats.MATK + positive.INT - negative.PSY,
+                MDEF = baseStats.MDEF + positive.PSY - negative.AGI,
+                ACC = baseStats.ACC + positive.DEX - (negative.STR + negative.INT)/2.00f,
+                EVA = baseStats.EVA + positive.AGI - negative.VIT,
+                SPD = baseStats.SPD + positive.AGI - (negative.VIT + negative.DEX)/2.00f,
+                CRIT = baseStats.CRIT,
+                CRITDMG = baseStats.CRITDMG + positive.DEX - negative.INT
             };
         }
         private void CalculateMaxStats()

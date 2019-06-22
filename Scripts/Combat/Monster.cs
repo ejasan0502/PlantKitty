@@ -22,8 +22,8 @@ namespace PlantKitty.Scripts.Combat
         public Monster(Monster m)
         {
             name = m.name;
-            currentStats = new Stats(m.currentStats.ToString());
-            maxStats = new Stats(m.maxStats.ToString());
+            currentStats = new Stats(m.currentStats);
+            maxStats = new Stats(m.maxStats);
             exp = m.exp;
             loot = new List<string>(m.loot);
         }
