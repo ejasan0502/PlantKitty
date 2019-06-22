@@ -49,7 +49,11 @@ namespace PlantKitty.Scripts.Data
             {
                 name = "Novice",
                 description = "You are a nobody.",
-                additive = new Attributes(0)
+                additive = new Attributes(0),
+                skills = new List<Skill>()
+                {
+                    GameData.Instance.GetSkill("Firebolt")
+                }
             };
             skills = new List<Skill>();
 
@@ -352,12 +356,17 @@ namespace PlantKitty.Scripts.Data
                 }
             }
         }
+
         public bool HasSkill(string skillName)
         {
             foreach (Skill s in skills)
                 if (s.name == skillName)
                     return true;
             return false;
+        }
+        public void AddSkill(Skill skill)
+        {
+            skills.Add(skill);
         }
     }
 }

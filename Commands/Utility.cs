@@ -208,6 +208,42 @@ namespace PlantKitty.Commands
             else
                 await ReplyAsync(log);
         }
+        [Command("learn")]
+        public async Task Learn(string skillName = "")
+        {
+            Player player;
+            string log;
+
+            if (CheckPlayer(out player, out log))
+            {
+                if (skillName == "")
+                {
+                    // Display learnable skills
+                    log = "Skills available to learn:";
+                    foreach (Skill s in player.job.skills)
+                    {
+                        if (log != "") log += "\n";
+                        log += s.name;
+                    }
+                } else if (player.HasSkill(skillName))
+                {
+                    log = $"{Context.User.Mention}. You have already learned {skillName}";
+                } else
+                {
+                    Skill skill = GameData.Instance.GetSkill(skillName);
+                    if (skill != null)
+                    {
+                        player.AddSkill(skill);
+                        log = $"{Context.User.Mention}. You have learned {skillName}!";
+                    } else
+                    {
+                        log = $"{Context.User.Mention}. Unknown skill name, {skillName}...";
+                    }
+                }
+            }
+
+            await ReplyAsync(log);
+        }
 
         [Command("save")]
         public async Task SavePlayer()
