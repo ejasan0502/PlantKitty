@@ -27,11 +27,12 @@ namespace PlantKitty.Scripts.Combat
                 {
                     bool isCrit = random.Next(0, 100) <= self.currentStats.CRIT;
 
-                    float inflict = self.currentStats.PATK - target.currentStats.PDEF;
+                    float inflict = self.currentStats.PATK * (isCrit ? self.currentStats.CRITDMG : 1);
+                    inflict -= target.currentStats.PDEF;
                     if (inflict < 1) inflict = 1f;
 
                     target.Hit(inflict);
-                    await channel.SendMessageAsync($"{target.name} takes {inflict} damage!");
+                    await channel.SendMessageAsync($"{target.name} takes {inflict} physical damage!");
                 }
                 else
                     await channel.SendMessageAsync($"{self.name} missed {target.name}...");

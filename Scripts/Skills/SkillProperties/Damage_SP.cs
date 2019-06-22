@@ -20,6 +20,10 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
         public override void Apply(Character caster, Character target)
         {
             float rawDmg = dmgType == DamageType.physical ? caster.currentStats.PATK : caster.currentStats.MATK;
+
+            Random random = new Random();
+            if (random.Next(0, 100) <= caster.currentStats.CRIT) rawDmg *= caster.currentStats.CRITDMG;
+
             if (percent)
                 rawDmg *= inflict;
             else
