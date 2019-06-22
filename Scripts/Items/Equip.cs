@@ -21,10 +21,12 @@ namespace PlantKitty.Scripts.Data
                 builder.Append($"{equipType.ToString()}\n");
                 if (stats.HP != 0) builder.Append($"HP: {stats.HP}\n");
                 if (stats.MP != 0) builder.Append($"MP: {stats.MP}\n");
-                if (stats.ATK != 0) builder.Append($"ATK: {stats.ATK}\n");
-                if (stats.DEF != 0) builder.Append($"DEF: {stats.DEF}\n");
+                if (stats.PATK != 0) builder.Append($"PATK: {stats.PATK}\n");
+                if (stats.PDEF != 0) builder.Append($"PDEF: {stats.PDEF}\n");
+                if (stats.MATK != 0) builder.Append($"MATK: {stats.MATK}\n");
+                if (stats.MDEF != 0) builder.Append($"MDEF: {stats.MDEF}\n");
                 if (stats.ACC != 0) builder.Append($"ACC: {stats.ACC}\n");
-                if (stats.EVA != 0) builder.Append($"EVA: {stats.EVA}");
+                if (stats.EVA != 0) builder.Append($"EVA: {stats.EVA}\n");
                 if (stats.SPD != 0) builder.Append($"SPD: {stats.SPD}");
 
                 return builder.ToString();

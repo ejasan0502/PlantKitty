@@ -25,7 +25,9 @@ namespace PlantKitty.Scripts.Combat
             {
                 if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
                 {
-                    float inflict = self.currentStats.ATK - target.currentStats.DEF;
+                    bool isCrit = random.Next(0, 100) <= self.currentStats.CRIT;
+
+                    float inflict = self.currentStats.PATK - target.currentStats.PDEF;
                     if (inflict < 1) inflict = 1f;
 
                     target.Hit(inflict);

@@ -36,6 +36,7 @@ namespace PlantKitty.Scripts.Combat
                 if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
                 {
                     skill.Apply(self, target);
+                    await channel.SendMessageAsync($"{self.name} casted {skill.name}" + (skill.isAoe ? "!" : $" on {target.name}!"));
                 }
                 else
                     await channel.SendMessageAsync($"{self.name} missed {target.name}...");

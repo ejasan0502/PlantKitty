@@ -29,7 +29,7 @@ namespace PlantKitty.Scripts.Data
 
         public Attributes lastAttributes;
         public Attributes attributes;
-        public Stats baseStats;
+        public Stats stats;
 
         public Equip[] equipment;
         public Inventory inventory;
@@ -102,12 +102,14 @@ namespace PlantKitty.Scripts.Data
                 PSY = CalculateNegativeBaseStat(attributes.PSY)
             };
 
-            baseStats = new Stats()
+            stats = new Stats()
             {
                 HP = 30 + positive.VIT - negative.PSY,
                 MP = 10 + positive.PSY,
-                ATK = 1 + (positive.STR + positive.INT) / 2.00f - negative.DEX,
-                DEF = 0 - negative.AGI - negative.INT,
+                PATK = 1 + positive.STR - negative.DEX,
+                PDEF = 0 - negative.AGI - negative.INT,
+                MATK = 1 + positive.INT - negative.DEX,
+                MDEF = 0 - negative.VIT - negative.INT,
                 ACC = 70 + positive.DEX - negative.STR,
                 EVA = 0 + positive.AGI - negative.VIT,
                 SPD = 0 + positive.AGI - negative.STR
@@ -134,7 +136,7 @@ namespace PlantKitty.Scripts.Data
         }
         private void ApplyEquipmentStats()
         {
-            maxStats = baseStats;
+            maxStats = stats;
             foreach (Equip e in equipment)
             {
                 if (e != null)

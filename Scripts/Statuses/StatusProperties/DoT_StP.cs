@@ -8,16 +8,19 @@ namespace PlantKitty.Scripts.Statuses.StatusProperties
     public class DoT_StP : StatusProperty
     {
         public bool percent;
+        public DamageType dmgType;
         public float inflict;
 
         public override string Description(Character caster)
         {
-            float tick = percent ? caster.currentStats.ATK * inflict : inflict;
+            float atk = dmgType == DamageType.physical ? caster.currentStats.PATK : caster.currentStats.MATK;
+            float tick = percent ? atk * inflict : inflict;
             return $"Deal {tick} damage over time.";
         }
         public override void Apply(Character caster, Character target)
         {
-            target.Hit(percent ? caster.currentStats.ATK * inflict : inflict);
+            float atk = dmgType == DamageType.physical ? caster.currentStats.PATK : caster.currentStats.MATK;
+            target.Hit(percent ? atk * inflict : inflict);
         }
         public override string ToDataString()
         {

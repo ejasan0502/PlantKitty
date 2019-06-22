@@ -114,8 +114,10 @@ namespace PlantKitty.Commands
                                $"XP: {player.exp}/{player.GetMaxExp()}\n\n" +
                                $"HP: {player.currentStats.HP}/{player.maxStats.HP}\n" +
                                $"MP: {player.currentStats.MP}/{player.maxStats.MP}\n" +
-                               $"ATK: {player.currentStats.ATK}\n" +
-                               $"DEF: {player.currentStats.DEF}\n" +
+                               $"PATK: {player.currentStats.PATK}\n" +
+                               $"PDEF: {player.currentStats.PDEF}\n" +
+                               $"MATK: {player.currentStats.MATK}\n" +
+                               $"MDEF: {player.currentStats.MDEF}\n" +
                                $"ACC: {player.currentStats.ACC}\n" +
                                $"EVA: {player.currentStats.EVA}\n" +
                                $"SPD: {player.currentStats.SPD}";

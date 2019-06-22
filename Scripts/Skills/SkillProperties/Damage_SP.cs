@@ -8,23 +8,24 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
     public class Damage_SP : SkillProperty
     {
         public bool percent;
+        public DamageType dmgType;
         public float inflict;
 
         public override string Description()
         {
             string p = percent ? "%" : "";
-            return $"Deal {inflict}{p} damage.";
+            return $"Deal {inflict}{p} {dmgType.ToString()} damage.";
         }
 
         public override void Apply(Character caster, Character target)
         {
-            float rawDmg = caster.currentStats.ATK;
+            float rawDmg = dmgType == DamageType.physical ? caster.currentStats.PATK : caster.currentStats.MATK;
             if (percent)
                 rawDmg *= inflict;
             else
                 rawDmg += inflict;
 
-            float dmg = rawDmg - target.currentStats.DEF;
+            float dmg = rawDmg - (dmgType == DamageType.physical ? target.currentStats.PDEF : target.currentStats.MDEF);
             if (dmg < 1f) dmg = 1f;
 
             target.Hit(dmg);
