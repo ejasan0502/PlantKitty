@@ -11,14 +11,6 @@ namespace PlantKitty.Scripts.Data.Converters
 {
     public class ListSkillPropertyJsonConverter : JsonConverter<List<SkillProperty>>
     {
-        public override bool CanWrite
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public override List<SkillProperty> ReadJson(JsonReader reader, Type objectType, List<SkillProperty> existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             string data = (string)reader.Value;
@@ -76,7 +68,13 @@ namespace PlantKitty.Scripts.Data.Converters
 
         public override void WriteJson(JsonWriter writer, List<SkillProperty> value, JsonSerializer serializer)
         {
-            throw new System.NotImplementedException();
+            string s = "";
+            for (int i = 0; i < value.Count; i++)
+            {
+                if (i != 0) s += "|";
+                s += value[i].ToDataString();
+            }
+            writer.WriteValue(s);
         }
     }
 }

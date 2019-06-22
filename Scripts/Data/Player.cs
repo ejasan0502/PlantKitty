@@ -49,7 +49,7 @@ namespace PlantKitty.Scripts.Data
             {
                 name = "Novice",
                 description = "You are a nobody.",
-                additive = null
+                additive = new Attributes(0)
             };
             skills = new List<Skill>();
 

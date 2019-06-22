@@ -233,7 +233,7 @@ namespace PlantKitty.Scripts.Data
                     {
                         name = "Novice",
                         description = "You are a nobody.",
-                        additive = null
+                        additive = new Attributes(0)
                     }
                 };
 
@@ -254,7 +254,7 @@ namespace PlantKitty.Scripts.Data
             List<Skill> loadedSkills;
             if (File.Exists(SkillDataPath))
             {
-                loadedSkills = JsonConvert.DeserializeObject<List<Skill>>(SkillDataPath);
+                loadedSkills = JsonConvert.DeserializeObject<List<Skill>>(File.ReadAllText(SkillDataPath));
             } else
             {
                 loadedSkills = new List<Skill>()
@@ -293,7 +293,7 @@ namespace PlantKitty.Scripts.Data
             List<Status> statusList;
             if (File.Exists(StatusDataPath))
             {
-                statusList = JsonConvert.DeserializeObject<List<Status>>(StatusDataPath);
+                statusList = JsonConvert.DeserializeObject<List<Status>>(File.ReadAllText(StatusDataPath));
             } else
             {
                 statusList = new List<Status>()

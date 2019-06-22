@@ -19,5 +19,9 @@ namespace PlantKitty.Scripts.Statuses.StatusProperties
         {
             target.Hit(percent ? caster.currentStats.ATK * inflict : inflict);
         }
+        public override string ToDataString()
+        {
+            return $"DoT_StP$percent>{percent}$inflict>{inflict}";
+        }
     }
 }

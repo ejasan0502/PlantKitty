@@ -10,5 +10,6 @@ namespace PlantKitty.Scripts.Statuses
     {
         public abstract string Description(Character caster);
         public abstract void Apply(Character caster, Character target);
+        public abstract string ToDataString();
     }
 }

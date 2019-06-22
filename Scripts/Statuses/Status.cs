@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PlantKitty.Scripts.Data;
+using PlantKitty.Scripts.Data.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,7 @@ namespace PlantKitty.Scripts.Statuses
         public string name;
         public bool continuous;
         public int duration;
-        public List<StatusProperty> properties;
+        [JsonConverter(typeof(ListStatusPropertyJsonConverter))] public List<StatusProperty> properties;
 
         private Character caster;
 

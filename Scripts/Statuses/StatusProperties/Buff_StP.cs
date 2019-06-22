@@ -31,5 +31,9 @@ namespace PlantKitty.Scripts.Statuses.StatusProperties
             else
                 target.maxStats += stats;
         }
+        public override string ToDataString()
+        {
+            return $"Buff_StP$percent>{percent}$stats>{stats.ToString()}";
+        }
     }
 }
