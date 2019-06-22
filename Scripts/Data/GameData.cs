@@ -233,7 +233,8 @@ namespace PlantKitty.Scripts.Data
                     {
                         name = "Novice",
                         description = "You are a nobody.",
-                        additive = new Attributes(0)
+                        attributes = new Attributes(0),
+                        stats = new Stats(0)
                     }
                 };
 

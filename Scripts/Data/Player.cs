@@ -50,7 +50,8 @@ namespace PlantKitty.Scripts.Data
             {
                 name = "Novice",
                 description = "You are a nobody.",
-                additive = new Attributes(0),
+                attributes = new Attributes(0),
+                stats = new Stats(0),
                 skills = new List<Skill>()
                 {
                     GameData.Instance.GetSkill("Firebolt")
@@ -179,19 +180,11 @@ namespace PlantKitty.Scripts.Data
         private void IncreaseAttributes()
         {
             lastAttributes = new Attributes(attributes.ToString());
+            attributes += job.attributes;
+            baseStats += job.stats;
 
-            if (job.additive == null)
-            {
-                List<string> att = attributes.GetType().GetFields().Select(a => a.Name).ToList();
-                Random random = new Random();
-                AddAttribute(att[random.Next(0, att.Count)], 1, false);
-            } else
-            {
-                attributes += job.additive;
-
-                CalculateStats();
-                CalculateMaxStats();
-            }
+            CalculateStats();
+            CalculateMaxStats();
         }
 
         public void SetTask(PlayerTask task)
@@ -212,13 +205,11 @@ namespace PlantKitty.Scripts.Data
         {
             this.job = job;
 
-            if (this.job.additive != null)
-            {
-                attributes += this.job.additive;
+            attributes += this.job.attributes;
+            baseStats += this.job.stats;
 
-                CalculateStats();
-                CalculateMaxStats();
-            }
+            CalculateStats();
+            CalculateMaxStats();
         }
 
         public void LevelUp()

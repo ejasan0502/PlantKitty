@@ -11,7 +11,8 @@ namespace PlantKitty.Scripts.Data
     {
         public string name;
         public string description;
-        public Attributes additive;
+        public Attributes attributes;
+        public Stats stats;
         [JsonConverter(typeof(ListSkillJsonConverter))] public List<Skill> skills;
     }
 }
