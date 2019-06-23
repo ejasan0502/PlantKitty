@@ -24,10 +24,11 @@ namespace PlantKitty.Commands
                 if (item == null) return;
 
                 player.inventory.AddItem(item, amount);
-                await ReplyAsync($"You gained x{amount} {item.name}");
+                log = $"{Context.User.Mention}. You gained x{amount} {item.name}";
                 PlayerData.Instance.SavePlayer(player.id);
-            } else 
-                await ReplyAsync(log);
+            }
+
+            await ReplyAsync(log);
         }
 #endif
     }

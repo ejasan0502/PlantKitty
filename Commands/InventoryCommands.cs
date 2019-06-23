@@ -12,95 +12,117 @@ namespace PlantKitty.Commands
 {
     public class InventoryCommands : PlayerCommand
     {
+
         [Command("equip")]
-        public async Task EquipItem(string itemName = "")
+        public async Task DisplayEquipsInInventory()
         {
             Player player;
             string log;
             if (CheckPlayer(out player, out log))
             {
-                if (itemName == "")
+                List<InventoryItem> equips = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Equip).ToList();
+                if (equips.Count > 0)
                 {
-                    List<InventoryItem> equips = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Equip).ToList();
-                    if (equips.Count > 0)
+                    EmbedBuilder builder = new EmbedBuilder()
+                        .WithTitle($"Equipment in @{Context.User.Username}'s Inventory");
+
+                    foreach (InventoryItem ii in equips)
                     {
-                        EmbedBuilder builder = new EmbedBuilder()
-                            .WithTitle($"Equipment in @{Context.User.Username}'s Inventory");
-
-                        foreach (InventoryItem ii in equips)
-                        {
-                            builder.AddField(ii.item.name, ((Equip)ii.item).Description, true);
-                        }
-
-                        await ReplyAsync(null, false, builder.Build());
+                        builder.AddField(ii.item.name, ((Equip)ii.item).Description, true);
                     }
-                } else
+
+                    await ReplyAsync(null, false, builder.Build());
+                }
+                else
+                    log = $"{Context.User.Mention}. No equipment found in inventory!";
+            }
+
+            if (log != "")
+                await ReplyAsync(log);
+        }
+        [Command("equip")]
+        public async Task EquipItem(string itemName)
+        {
+            Player player;
+            string log;
+            if (CheckPlayer(out player, out log))
+            {
+                InventoryItem equipItem = player.inventory.slots
+                    .Where<InventoryItem>(ii => ii.item is Equip && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
+
+                if (equipItem != null)
                 {
-                    InventoryItem equipItem = player.inventory.slots
-                        .Where<InventoryItem>(ii => ii.item is Equip && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
+                    player.Equip(equipItem.item as Equip);
+                    player.inventory.RemoveItem(equipItem.item, 1);
+                    PlayerData.Instance.SavePlayer(player.id);
+                    log = $"{Context.User.Mention}. Equipped {itemName}!";
+                }
+                else
+                    log = $"{Context.User.Mention}. Unable to find the equippable item, {itemName}, in inventory!";
+            }
 
-                    if (equipItem != null)
+            if (log != "")
+                await ReplyAsync(log);
+        }
+
+        [Command("use")]
+        public async Task DisplayConsumablesInInventory()
+        {
+            Player player;
+            string log;
+            if (CheckPlayer(out player, out log))
+            {
+                // Display all consumables in inventory
+                List<InventoryItem> items = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Consumable).ToList();
+                if (items.Count > 0)
+                {
+                    EmbedBuilder builder = new EmbedBuilder()
+                        .WithTitle($"Consumables in @{Context.User.Username}'s Inventory");
+
+                    foreach (InventoryItem ii in items)
                     {
-                        player.Equip(equipItem.item as Equip);
-                        player.inventory.RemoveItem(equipItem.item, 1);
-                        PlayerData.Instance.SavePlayer(player.id);
+                        builder.AddField(ii.item.name, ((Consumable)ii.item).Description, true);
                     }
+
+                    await ReplyAsync(null, false, builder.Build());
                 }
             }
-            else
+
+            if (log != "")
                 await ReplyAsync(log);
         }
         [Command("use")]
-        public async Task UseItem(string itemName = "")
+        public async Task UseItem(string itemName)
         {
             Player player;
             string log;
             if (CheckPlayer(out player, out log))
             {
-                if (itemName == "")
+                InventoryItem inventoryItem = player.inventory.slots
+                    .Where<InventoryItem>(ii => ii.item is Consumable && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
+
+                if (inventoryItem != null)
                 {
-                    // Display all consumables in inventory
-                    List<InventoryItem> items = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Consumable).ToList();
-                    if (items.Count > 0)
+                    Consumable consumeable = inventoryItem.item as Consumable;
+                    if (consumeable.friendly)
                     {
-                        EmbedBuilder builder = new EmbedBuilder()
-                            .WithTitle($"Consumables in @{Context.User.Username}'s Inventory");
+                        // Use item
+                        ((Consumable)inventoryItem.item).Use(player.inventory, player);
+                        player.inventory.RemoveItem(inventoryItem.item, 1);
+                        PlayerData.Instance.SavePlayer(player.id);
 
-                        foreach (InventoryItem ii in items)
-                        {
-                            builder.AddField(ii.item.name, ((Consumable)ii.item).Description, true);
-                        }
-
-                        await ReplyAsync(null, false, builder.Build());
-                    }
+                        log = $"{Context.User.Mention}. You used 1 {itemName}!";
+                    } else
+                        log = $"{Context.User.Mention}. {itemName} cannot be used on you!";
                 }
                 else
-                {
-                    InventoryItem inventoryItem = player.inventory.slots
-                        .Where<InventoryItem>(ii => ii.item is Consumable && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
-
-                    if (inventoryItem != null)
-                    {
-                        Consumable consumeable = inventoryItem.item as Consumable;
-                        if (consumeable.friendly)
-                        {
-                            // Use item
-                            ((Consumable)inventoryItem.item).Use(player.inventory, player);
-                            player.inventory.RemoveItem(inventoryItem.item, 1);
-                            await ReplyAsync($"{Context.User.Mention}. You used 1 {itemName}!");
-                        } else
-                            await ReplyAsync($"{Context.User.Mention}. {itemName} cannot be used on you!");
-                        PlayerData.Instance.SavePlayer(player.id);
-                    }
-                    else
-                    {
-                        await ReplyAsync($"{Context.User.Mention}. Cannot find {itemName} in inventory...");
-                    }
-                }
+                    log = $"{Context.User.Mention}. Cannot find the consumable, {itemName}, in inventory...";
             }
-            else
+            
+            if (log != "")
                 await ReplyAsync(log);
         }
+
         [Command("drop")]
         public async Task DropItem(string itemName, int amount = 0)
         {
@@ -117,9 +139,13 @@ namespace PlantKitty.Commands
                     else
                         player.inventory.RemoveItem(inventoryItem.item, amount);
                     PlayerData.Instance.SavePlayer(player.id);
+                    log = $"{Context.User.Mention}. You dropped {amount} {itemName}!";
                 }
+                else
+                    log = $"{Context.User.Mention}. Unable to find {itemName} in inventory...";
             }
-            else
+            
+            if (log != "")
                 await ReplyAsync(log);
         }
         [Command("inventory")]
@@ -129,19 +155,25 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                EmbedBuilder builder = new EmbedBuilder()
-                    .WithTitle($"{Context.User.Username}'s Inventory");
-
-                int count = 0;
-                foreach (InventoryItem inventoryItem in player.inventory.slots)
+                if (player.inventory.slots.Count > 0)
                 {
-                    builder.AddField($"{inventoryItem.item.name} x{inventoryItem.amount}", inventoryItem.item.Description, count < 4);
-                    count++;
-                    if (count > 3) count = 0;
+                    EmbedBuilder builder = new EmbedBuilder()
+                        .WithTitle($"{Context.User.Username}'s Inventory");
+
+                    int count = 0;
+                    foreach (InventoryItem inventoryItem in player.inventory.slots)
+                    {
+                        builder.AddField($"{inventoryItem.item.name} x{inventoryItem.amount}", inventoryItem.item.Description, count < 4);
+                        count++;
+                        if (count > 3) count = 0;
+                    }
+                    await ReplyAsync(null, false, builder.Build());
                 }
-                await ReplyAsync(null, false, builder.Build());
+                else
+                    log = $"{Context.User.Mention}. You have no items in inventory!";
             }
-            else
+
+            if (log != "")
                 await ReplyAsync(log);
         }
     }

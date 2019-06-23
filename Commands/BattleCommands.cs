@@ -31,10 +31,13 @@ namespace PlantKitty.Commands
         {
             return player.task != null && player.task is Battling;
         }
-        private bool IsValidIndex(int index, List<Character> characters)
+        private bool IsValidIndex(int index, List<Character> characters, out string log)
         {
+            log = $"{Context.User.Mention}. Invalid index...";
             if (index < 0 || index >= characters.Count) return false;
             if (characters[index].currentStats.HP <= 0) return false;
+
+            log = "";
             return true;
         }
 
@@ -62,24 +65,23 @@ namespace PlantKitty.Commands
             Player player;
             string log;
 
-            if (!IsPrivate(Context.Channel, out log))
+            if (IsPrivate(Context.Channel, out log))
             {
-                await ReplyAsync(log);
-                return;
+                if (CheckPlayer(out player, out log) && IsInBattle(player))
+                {
+                    Battling task = player.task as Battling;
+                    Battle battle = BattleManager.Instance.GetBattle(task.battleId);
+                    if (IsValidIndex(index, battle.monsters.Cast<Character>().ToList(), out log))
+                    {
+                        Attack action = new Attack(player, battle.monsters[index]);
+                        battle.AddAction(action);
+
+                        await BattleManager.Instance.PerformBattle(battle, Context.Channel);
+                    }
+                }
             }
 
-            if (CheckPlayer(out player, out log) && IsInBattle(player))
-            {
-                Battling task = player.task as Battling;
-                Battle battle = BattleManager.Instance.GetBattle(task.battleId);
-                if (!IsValidIndex(index, battle.monsters.Cast<Character>().ToList())) return;
-
-                Attack action = new Attack(player, battle.monsters[index]);
-                battle.AddAction(action);
-
-                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
-            }
-            else if (log != "")
+            if (log != "")
                 await ReplyAsync(log);
         }
         [Command("use", RunMode = RunMode.Async)]
@@ -88,34 +90,37 @@ namespace PlantKitty.Commands
             Player player;
             string log;
 
-            if (!IsPrivate(Context.Channel, out log))
+            if (IsPrivate(Context.Channel, out log))
             {
-                await ReplyAsync(log);
-                return;
+                if (CheckPlayer(out player, out log) && IsInBattle(player))
+                {
+                    Battling task = player.task as Battling;
+                    Battle battle = BattleManager.Instance.GetBattle(task.battleId);
+
+                    Item item = GameData.Instance.GetItem(itemName);
+                    if (item != null && item is Consumable)
+                    {
+                        Consumable consumable = item as Consumable;
+                        List<Character> characters;
+                        if (consumable.friendly)
+                            characters = battle.players.Cast<Character>().ToList();
+                        else
+                            characters = battle.monsters.Cast<Character>().ToList();
+
+                        if (IsValidIndex(index, characters, out log))
+                        {
+                            Use action = new Use(consumable, player, characters[index]);
+                            battle.AddAction(action);
+
+                            await BattleManager.Instance.PerformBattle(battle, Context.Channel);
+                        }
+                    }
+                    else
+                        log = $"{Context.User.Mention}. Unknown consumable item...";
+                }
             }
 
-            if (CheckPlayer(out player, out log) && IsInBattle(player))
-            {
-                Battling task = player.task as Battling;
-                Battle battle = BattleManager.Instance.GetBattle(task.battleId);
-
-                Item item = GameData.Instance.GetItem(itemName);
-                if (item == null || !(item is Consumable)) return;
-
-                Consumable consumable = item as Consumable;
-                List<Character> characters;
-                if (consumable.friendly)
-                    characters = battle.players.Cast<Character>().ToList();
-                else
-                    characters = battle.monsters.Cast<Character>().ToList();
-                if (!IsValidIndex(index, characters)) return;
-
-                Use action = new Use(consumable, player, characters[index]);
-                battle.AddAction(action);
-
-                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
-            }
-            else if (log != "")
+            if (log != "")
                 await ReplyAsync(log);
         }
         [Command("flee", RunMode = RunMode.Async)]
@@ -152,7 +157,8 @@ namespace PlantKitty.Commands
                     await BattleManager.Instance.PerformBattle(battle, Context.Channel);
                 }
             }
-            else if (log != "")
+
+            if (log != "")
                 await ReplyAsync(log);
         }
 
@@ -162,33 +168,40 @@ namespace PlantKitty.Commands
             Player player;
             string log;
 
-            if (!IsPrivate(Context.Channel, out log))
+            if (IsPrivate(Context.Channel, out log))
             {
-                await ReplyAsync(log);
-                return;
+                if (CheckPlayer(out player, out log) && IsInBattle(player))
+                {
+                    Skill skill = GameData.Instance.GetSkill(skillName);
+                    if (skill != null)
+                    {
+                        if (player.HasSkill(skillName))
+                        {
+                            Battling task = player.task as Battling;
+                            Battle battle = BattleManager.Instance.GetBattle(task.battleId);
+
+                            List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
+                            if (IsValidIndex(index, characters, out log))
+                            {
+                                Cast action;
+                                if (skill.isAoe)
+                                    action = new Cast(player, characters, skill);
+                                else
+                                    action = new Cast(player, characters[index], skill);
+                                battle.AddAction(action);
+
+                                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
+                            }
+                        }
+                        else
+                            log = $"{Context.User.Mention}. You have not learned {skillName}!";
+                    }
+                    else
+                        log = $"{Context.User.Mention}. Unknown skill name...";
+                }
             }
 
-            if (CheckPlayer(out player, out log) && IsInBattle(player) && player.HasSkill(skillName))
-            {
-                Battling task = player.task as Battling;
-                Battle battle = BattleManager.Instance.GetBattle(task.battleId);
-
-                Skill skill = GameData.Instance.GetSkill(skillName);
-                if (skill == null) return;
-
-                List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
-                if (!IsValidIndex(index, characters)) return;
-
-                Cast action;
-                if (skill.isAoe)
-                    action = new Cast(player, characters, skill);
-                else
-                    action = new Cast(player, characters[index], skill);
-                battle.AddAction(action);
-
-                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
-            }
-            else if (log != "")
+            if (log != "")
                 await ReplyAsync(log);
         }
     }
