@@ -18,6 +18,18 @@ namespace PlantKitty.Commands
         [Command("help")]
         public async Task Help()
         {
+            string[] categories = Enum.GetNames(typeof(CommandCategory));
+            string log = $"{Context.User.Mention}. All command categories are:";
+            foreach (string s in categories)
+            {
+                log += "\n" + s;
+            }
+
+            await ReplyAsync(log);
+        }
+        [Command("help")]
+        public async Task Help(CommandCategory category)
+        {
             string path = "Resources/Commands.json";
             List<Command> commands = new List<Command>();
             if (File.Exists(path))
@@ -28,8 +40,11 @@ namespace PlantKitty.Commands
             string log = "";
             foreach (Command command in commands)
             {
-                if (log != "") log += "\n";
-                log += $"{command.name}. {command.description}";
+                if (command.category == category)
+                {
+                    if (log != "") log += "\n";
+                    log += $"{command.name}. {command.description}";
+                }
             }
 
             await ReplyAsync(log);
@@ -97,10 +112,17 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                if (player.pointsAvailable < amount) amount = player.pointsAvailable;
-                player.AddAttribute(attribute, amount);
-                await ReplyAsync($"{Context.User.Mention}. {attribute} increased by {amount}");
-                PlayerData.Instance.SavePlayer(player.id);
+                if (IsInBattle(player))
+                {
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
+                }
+                else
+                {
+                    if (player.pointsAvailable < amount) amount = player.pointsAvailable;
+                    player.AddAttribute(attribute, amount);
+                    await ReplyAsync($"{Context.User.Mention}. {attribute} increased by {amount}");
+                    PlayerData.Instance.SavePlayer(player.id);
+                }
             }
             else
                 await ReplyAsync(log);

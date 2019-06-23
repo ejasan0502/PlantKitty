@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace PlantKitty.Commands
 {
+    // Note: When adding a new command, remember to add to CommandCategory enum in Command script
+
     public class _EmptyCommand : PlayerCommand
     {
         //[Command("")]

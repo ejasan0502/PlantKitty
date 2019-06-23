@@ -91,12 +91,19 @@ namespace PlantKitty.Commands
 
             if (CheckPlayer(out player, out log))
             {
-                // Display learnable skills
-                log = $"{Context.User.Mention}. Skills available to learn:";
-                foreach (string s in player.job.skills)
+                if (IsInBattle(player))
                 {
-                    if (log != "") log += "\n";
-                    log += s;
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
+                }
+                else
+                {
+                    // Display learnable skills
+                    log = $"{Context.User.Mention}. Skills available to learn:";
+                    foreach (string s in player.job.skills)
+                    {
+                        if (log != "") log += "\n";
+                        log += s;
+                    }
                 }
             }
 
@@ -112,19 +119,28 @@ namespace PlantKitty.Commands
 
             if (CheckPlayer(out player, out log))
             {
-                if (player.HasSkill(skillName))
+                if (IsInBattle(player))
                 {
-                    log = $"{Context.User.Mention}. You have already learned {skillName}!";
-                } else
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
+                }
+                else
                 {
-                    Skill skill = GameData.Instance.GetSkill(skillName);
-                    if (skill != null)
+                    if (player.HasSkill(skillName))
                     {
-                        player.AddSkill(skill);
-                        log = $"{Context.User.Mention}. You have learned {skillName}!";
-                    } else
+                        log = $"{Context.User.Mention}. You have already learned {skillName}!";
+                    }
+                    else
                     {
-                        log = $"{Context.User.Mention}. Unknown skill name, {skillName}...";
+                        Skill skill = GameData.Instance.GetSkill(skillName);
+                        if (skill != null)
+                        {
+                            player.AddSkill(skill);
+                            log = $"{Context.User.Mention}. You have learned {skillName}!";
+                        }
+                        else
+                        {
+                            log = $"{Context.User.Mention}. Unknown skill name, {skillName}...";
+                        }
                     }
                 }
             }

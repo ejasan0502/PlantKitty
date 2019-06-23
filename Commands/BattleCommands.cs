@@ -27,10 +27,6 @@ namespace PlantKitty.Commands
                 return false;
             }
         }
-        private bool IsInBattle(Player player)
-        {
-            return player.task != null && player.task is Battling;
-        }
         private bool IsValidIndex(int index, List<Character> characters, out string log)
         {
             log = $"{Context.User.Mention}. Invalid index...";

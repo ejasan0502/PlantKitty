@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using PlantKitty.Scripts.Actions;
 using PlantKitty.Scripts.Data;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,10 @@ namespace PlantKitty.Commands
             }
             error = "";
             return true;
+        }
+        protected bool IsInBattle(Player player)
+        {
+            return player.task != null && player.task is Battling;
         }
     }
 }

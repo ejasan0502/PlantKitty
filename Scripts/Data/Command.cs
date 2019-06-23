@@ -10,11 +10,18 @@ namespace PlantKitty.Scripts.Data
     {
         public string name;
         public string description;
+        public CommandCategory category;
+    }
 
-        public Command(string name, string description)
-        {
-            this.name = name;
-            this.description = description;
-        }
+    public enum CommandCategory
+    {
+        battle,
+        craft,
+        gather,
+        info,
+        inventory,
+        gesture,
+        utility,
+        world
     }
 }

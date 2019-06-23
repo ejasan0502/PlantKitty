@@ -20,21 +20,27 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                List<InventoryItem> equips = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Equip).ToList();
-                if (equips.Count > 0)
+                if (IsInBattle(player))
                 {
-                    EmbedBuilder builder = new EmbedBuilder()
-                        .WithTitle($"Equipment in @{Context.User.Username}'s Inventory");
-
-                    foreach (InventoryItem ii in equips)
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
+                } else
+                {
+                    List<InventoryItem> equips = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Equip).ToList();
+                    if (equips.Count > 0)
                     {
-                        builder.AddField(ii.item.name, ((Equip)ii.item).Description, true);
-                    }
+                        EmbedBuilder builder = new EmbedBuilder()
+                            .WithTitle($"Equipment in @{Context.User.Username}'s Inventory");
 
-                    await ReplyAsync(null, false, builder.Build());
+                        foreach (InventoryItem ii in equips)
+                        {
+                            builder.AddField(ii.item.name, ((Equip)ii.item).Description, true);
+                        }
+
+                        await ReplyAsync(null, false, builder.Build());
+                    }
+                    else
+                        log = $"{Context.User.Mention}. No equipment found in inventory!";
                 }
-                else
-                    log = $"{Context.User.Mention}. No equipment found in inventory!";
             }
 
             if (log != "")
@@ -47,18 +53,25 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                InventoryItem equipItem = player.inventory.slots
-                    .Where<InventoryItem>(ii => ii.item is Equip && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
-
-                if (equipItem != null)
+                if (IsInBattle(player))
                 {
-                    player.Equip(equipItem.item as Equip);
-                    player.inventory.RemoveItem(equipItem.item, 1);
-                    PlayerData.Instance.SavePlayer(player.id);
-                    log = $"{Context.User.Mention}. Equipped {itemName}!";
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
                 }
                 else
-                    log = $"{Context.User.Mention}. Unable to find the equippable item, {itemName}, in inventory!";
+                {
+                    InventoryItem equipItem = player.inventory.slots
+                    .Where<InventoryItem>(ii => ii.item is Equip && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
+
+                    if (equipItem != null)
+                    {
+                        player.Equip(equipItem.item as Equip);
+                        player.inventory.RemoveItem(equipItem.item, 1);
+                        PlayerData.Instance.SavePlayer(player.id);
+                        log = $"{Context.User.Mention}. Equipped {itemName}!";
+                    }
+                    else
+                        log = $"{Context.User.Mention}. Unable to find the equippable item, {itemName}, in inventory!";
+                }
             }
 
             if (log != "")
@@ -72,19 +85,26 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                // Display all consumables in inventory
-                List<InventoryItem> items = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Consumable).ToList();
-                if (items.Count > 0)
+                if (IsInBattle(player))
                 {
-                    EmbedBuilder builder = new EmbedBuilder()
-                        .WithTitle($"Consumables in @{Context.User.Username}'s Inventory");
-
-                    foreach (InventoryItem ii in items)
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
+                }
+                else
+                {
+                    // Display all consumables in inventory
+                    List<InventoryItem> items = player.inventory.slots.Where<InventoryItem>(ii => ii.item is Consumable).ToList();
+                    if (items.Count > 0)
                     {
-                        builder.AddField(ii.item.name, ((Consumable)ii.item).Description, true);
-                    }
+                        EmbedBuilder builder = new EmbedBuilder()
+                            .WithTitle($"Consumables in @{Context.User.Username}'s Inventory");
 
-                    await ReplyAsync(null, false, builder.Build());
+                        foreach (InventoryItem ii in items)
+                        {
+                            builder.AddField(ii.item.name, ((Consumable)ii.item).Description, true);
+                        }
+
+                        await ReplyAsync(null, false, builder.Build());
+                    }
                 }
             }
 
@@ -98,25 +118,33 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                InventoryItem inventoryItem = player.inventory.slots
-                    .Where<InventoryItem>(ii => ii.item is Consumable && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
-
-                if (inventoryItem != null)
+                if (IsInBattle(player))
                 {
-                    Consumable consumeable = inventoryItem.item as Consumable;
-                    if (consumeable.friendly)
-                    {
-                        log = $"{Context.User.Mention}. You used 1 {itemName}!";
-
-                        // Use item
-                        ((Consumable)inventoryItem.item).Use(player, ref log);
-                        player.inventory.RemoveItem(inventoryItem.item, 1);
-                        PlayerData.Instance.SavePlayer(player.id);
-                    } else
-                        log = $"{Context.User.Mention}. {itemName} cannot be used on you!";
+                    log = $"{Context.User.Mention}. This command is not available during combat!";
                 }
                 else
-                    log = $"{Context.User.Mention}. Cannot find the consumable, {itemName}, in inventory...";
+                {
+                    InventoryItem inventoryItem = player.inventory.slots
+                    .Where<InventoryItem>(ii => ii.item is Consumable && ii.item.name.ToLower() == itemName.ToLower()).FirstOrDefault();
+
+                    if (inventoryItem != null)
+                    {
+                        Consumable consumeable = inventoryItem.item as Consumable;
+                        if (consumeable.friendly)
+                        {
+                            log = $"{Context.User.Mention}. You used 1 {itemName}!";
+
+                            // Use item
+                            ((Consumable)inventoryItem.item).Use(player, ref log);
+                            player.inventory.RemoveItem(inventoryItem.item, 1);
+                            PlayerData.Instance.SavePlayer(player.id);
+                        }
+                        else
+                            log = $"{Context.User.Mention}. {itemName} cannot be used on you!";
+                    }
+                    else
+                        log = $"{Context.User.Mention}. Cannot find the consumable, {itemName}, in inventory...";
+                }
             }
             
             if (log != "")
