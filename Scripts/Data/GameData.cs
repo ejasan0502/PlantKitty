@@ -346,18 +346,24 @@ namespace PlantKitty.Scripts.Data
             Field field = GetField(fieldName);
             if (field == null) return null;
 
+            return GetRandomItem(field.loot, lootCategory, 0);
+        }
+        public Item GetRandomItem(List<string> items, LootCategory? lootCategory, int luck)
+        {
+            int percentAdd = (int)Math.Round(MathF.Log(MathF.Pow(10 * luck, 2)));
+
             Tier tier = Tier.common;
             Random random = new Random();
-            int percent = random.Next(0, 100);
+            int percent = random.Next(0, 100) + percentAdd;
             if (percent >= 95) tier = Tier.unique;
             else if (percent >= 80) tier = Tier.rare;
             else if (percent >= 50) tier = Tier.uncommon;
 
             List<Item> lootTable = new List<Item>();
-            foreach (string l in field.loot)
+            foreach (string l in items)
             {
                 Item item = GetItem(l);
-                if (item != null && item.lootCategory == lootCategory && item.tier >= tier)
+                if (item != null && item.tier >= tier && (lootCategory == null || item.lootCategory == lootCategory))
                 {
                     lootTable.Add(item);
                 }

@@ -112,7 +112,6 @@ namespace PlantKitty.Scripts.Combat
                 await channel.SendMessageAsync($"You have gained {xpGain} experience!");
 
                 // Check level up
-                await Task.Delay(500);
                 if (p.CheckIfLeveledUp(out Attributes changes))
                 {
                     await channel.SendMessageAsync("You have leveled up!");
@@ -134,7 +133,7 @@ namespace PlantKitty.Scripts.Combat
                     int lootCount = random.Next(1, maxLootPerMonster);
                     for (int i = 0; i < lootCount; i++)
                     {
-                        Item item = GameData.Instance.GetItem(m.loot[random.Next(0, m.loot.Count)]);
+                        Item item = GameData.Instance.GetRandomItem(m.loot, null, p.attributes.LUK);
                         if (item != null)
                         {
                             if (!loot.ContainsKey(item.name))
