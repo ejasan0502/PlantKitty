@@ -46,17 +46,7 @@ namespace PlantKitty.Scripts.Data
 
             task = null;
             field = "Trainee Island";
-            job = new JobClass()
-            {
-                name = "Novice",
-                description = "You are a nobody.",
-                attributes = new Attributes(0),
-                stats = new Stats(0),
-                skills = new List<Skill>()
-                {
-                    GameData.Instance.GetSkill("Firebolt")
-                }
-            };
+            job = GameData.Instance.GetJob("Novice");
             skills = new List<Skill>();
 
             baseStats = new Stats()

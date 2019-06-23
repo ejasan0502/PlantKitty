@@ -93,10 +93,10 @@ namespace PlantKitty.Commands
             {
                 // Display learnable skills
                 log = $"{Context.User.Mention}. Skills available to learn:";
-                foreach (Skill s in player.job.skills)
+                foreach (string s in player.job.skills)
                 {
                     if (log != "") log += "\n";
-                    log += s.name;
+                    log += s;
                 }
             }
 

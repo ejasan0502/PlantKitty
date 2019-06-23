@@ -29,7 +29,8 @@ namespace PlantKitty.Scripts.Data.Converters
                             properties.Add(new Damage_SP()
                             {
                                 percent = bool.Parse(vals[1].Split('>')[1]),
-                                inflict = float.Parse(vals[2].Split('>')[1])
+                                dmgType = (DamageType)Enum.Parse(typeof(DamageType), vals[2].Split('>')[1]),
+                                inflict = float.Parse(vals[3].Split('>')[1])
                             });
                             break;
                         case "Status_SP":

@@ -42,7 +42,7 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
 
         public override string ToDataString()
         {
-            return $"Damage_SP$percent>{percent}$inflict>{inflict}";
+            return $"Damage_SP$percent>{percent}$dmgType>{dmgType.ToString()}$inflict>{inflict}";
         }
     }
 }

@@ -70,9 +70,9 @@ namespace PlantKitty.Scripts.Data
             LoadWorldData();
             LoadMonsterData();
             LoadRecipeData();
-            LoadJobData();
-            LoadSkillData();
             LoadStatusData();
+            LoadSkillData();
+            LoadJobData();
         }
 
         private void LoadItemData()
@@ -177,7 +177,6 @@ namespace PlantKitty.Scripts.Data
             if (File.Exists(RecipeDataPath))
             {
                 allRecipes = JsonConvert.DeserializeObject<List<Recipe>>(File.ReadAllText(RecipeDataPath));
-                Console.WriteLine("Recipe data loaded!");
             }
             else
             {
@@ -234,7 +233,11 @@ namespace PlantKitty.Scripts.Data
                         name = "Novice",
                         description = "You are a nobody.",
                         attributes = new Attributes(0),
-                        stats = new Stats(0)
+                        stats = new Stats(0),
+                        skills = new List<string>()
+                        {
+                            "Firebolt"
+                        }
                     }
                 };
 
@@ -339,6 +342,8 @@ namespace PlantKitty.Scripts.Data
         {
             if (items.ContainsKey(itemName))
                 return items[itemName];
+
+            Console.WriteLine($"GetItem returned null! {itemName}");
             return null;
         }
         public Item GetRandomItem(string fieldName, LootCategory lootCategory)
@@ -373,17 +378,24 @@ namespace PlantKitty.Scripts.Data
                 return lootTable[random.Next(lootTable.Count)];
             }
 
+            Console.WriteLine("GetRandomItem(List, LootCategory, int) returned null!");
             return null;
         }
         public Monster GetMonster(string monsterName)
         {
             if (monsters.ContainsKey(monsterName))
                 return new Monster(monsters[monsterName]);
+
+            Console.WriteLine("GetMonster returned null! " + monsterName);
             return null;
         }
         public List<Recipe> GetRecipes(string itemType)
         {
-            if (!recipeItemTypes.ContainsKey(itemType)) return null;
+            if (!recipeItemTypes.ContainsKey(itemType))
+            {
+                Console.WriteLine("GetRecipes returned null!");
+                return null;
+            }
 
             List<Recipe> recipeList = new List<Recipe>();
             foreach (int i in recipeItemTypes[itemType])
@@ -395,24 +407,32 @@ namespace PlantKitty.Scripts.Data
         {
             if (recipes.ContainsKey(itemName))
                 return allRecipes[ recipes[itemName] ];
+
+            Console.WriteLine("GetRecipe returned null! " + itemName);
             return null;
         }
         public JobClass GetJob(string job)
         {
             if (jobs.ContainsKey(job))
                 return jobs[job];
+
+            Console.WriteLine("GetJob returned null! " + job);
             return default;
         }
         public Skill GetSkill(string skill)
         {
             if (skills.ContainsKey(skill))
                 return skills[skill];
+
+            Console.WriteLine("GetSkill returned null! " + skill);
             return null;
         }
         public Status GetStatus(string status)
         {
             if (statuses.ContainsKey(status))
                 return statuses[status];
+
+            Console.WriteLine("GetStatus returned null! " + status);
             return default;
         }
     }
