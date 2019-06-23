@@ -21,10 +21,13 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
             return data;
         }
 
-        public override void Apply(Character caster, Character target)
+        public override void Apply(Character caster, Character target, ref string log)
         {
             foreach (string s in statuses)
+            {
                 target.RemoveStatus(s);
+            }
+            log += $"{target.name} has been cured!";
         }
 
         public override string ToDataString()

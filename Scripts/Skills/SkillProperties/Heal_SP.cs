@@ -17,12 +17,13 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
             return $"Heals for {amount}{p}.";
         }
 
-        public override void Apply(Character caster, Character target)
+        public override void Apply(Character caster, Character target, ref string log)
         {
             float healAmount = amount;
             if (percent) healAmount *= target.maxStats.HP;
 
             target.Hit(-healAmount);
+            log += $"{target.name} has recovered {healAmount}!";
         }
 
         public override string ToDataString()

@@ -25,12 +25,13 @@ namespace PlantKitty.Scripts.Combat
         {
             if (self.currentStats.HP <= 0) return;
 
+            string log = $"{self.name} uses {consumable.name}!";
             foreach (Character target in targets)
             {
-                consumable.Use(inventory, target);
+                consumable.Use(target, ref log);
             }
             inventory.RemoveItem(consumable, 1);
-            await Task.Delay(1);
+            await channel.SendMessageAsync(log);
         }
     }
 }

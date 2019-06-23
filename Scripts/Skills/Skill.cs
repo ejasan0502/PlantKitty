@@ -28,17 +28,21 @@ namespace PlantKitty.Scripts.Skills
             }
         }
 
-        public void Apply(Character caster, Character target)
+        public void Apply(Character caster, Character target, ref string log)
         {
             foreach (SkillProperty sp in properties)
             {
-                sp.Apply(caster, target);
+                if (log != "") log += "\n";
+                sp.Apply(caster, target, ref log);
             }
         }
-        public void Apply(Character caster, List<Character> targets)
+        public void Apply(Character caster, List<Character> targets, ref string log)
         {
             foreach (Character c in targets)
-                Apply(caster, c);
+            {
+                if (log != "") log += "\n";
+                Apply(caster, c, ref log);
+            }
         }
     }
 }

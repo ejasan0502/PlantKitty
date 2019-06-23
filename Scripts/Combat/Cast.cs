@@ -31,12 +31,18 @@ namespace PlantKitty.Scripts.Combat
             if (self.currentStats.HP <= 0) return;
 
             Random random = new Random();
+            if (skill.isAoe)
+            {
+                await channel.SendMessageAsync($"{self.name} casts {skill.name}!");
+            }
+
             foreach (Character target in targets)
             {
                 if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
                 {
-                    skill.Apply(self, target);
-                    await channel.SendMessageAsync($"{self.name} casted {skill.name}" + (skill.isAoe ? "!" : $" on {target.name}!"));
+                    string log = !skill.isAoe ? $"{self.name} casts {skill.name} on {target.name}!" : "";
+                    skill.Apply(self, target, ref log);
+                    await channel.SendMessageAsync(log);
                 }
                 else
                     await channel.SendMessageAsync($"{self.name} missed {target.name}...");

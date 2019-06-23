@@ -28,6 +28,12 @@ namespace PlantKitty.Scripts.Data
                 ((Player)character).SetJobClass(GameData.Instance.GetJob(job));
             }
         }
+
+        public override string OnConsume(Character target)
+        {
+            return $"{target.name} is now a {job}!";
+        }
+
         public override string ToDataString()
         {
             return $"JobChange$job>{job}";

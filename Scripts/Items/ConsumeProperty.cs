@@ -13,5 +13,6 @@ namespace PlantKitty.Scripts.Data
         public abstract string Description { get; }
         public abstract void Apply(Character character);
         public abstract string ToDataString();
+        public abstract string OnConsume(Character target);
     }
 }

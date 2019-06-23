@@ -17,12 +17,16 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
             return $"Deal {inflict}{p} {dmgType.ToString()} damage.";
         }
 
-        public override void Apply(Character caster, Character target)
+        public override void Apply(Character caster, Character target, ref string log)
         {
             float rawDmg = dmgType == DamageType.physical ? caster.currentStats.PATK : caster.currentStats.MATK;
 
             Random random = new Random();
-            if (random.Next(0, 100) <= caster.currentStats.CRIT) rawDmg *= caster.currentStats.CRITDMG;
+            if (random.Next(0, 100) <= caster.currentStats.CRIT)
+            {
+                rawDmg *= caster.currentStats.CRITDMG;
+                log += "CRITICAL\n";
+            }
 
             if (percent)
                 rawDmg *= inflict;
@@ -33,6 +37,7 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
             if (dmg < 1f) dmg = 1f;
 
             target.Hit(dmg);
+            log += $"{target.name} takes {dmg} {dmgType.ToString()} damage!";
         }
 
         public override string ToDataString()

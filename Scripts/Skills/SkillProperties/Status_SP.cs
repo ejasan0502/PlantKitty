@@ -17,12 +17,13 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
             return $"{chance}% chance to inflict {status}.\n" + (st.name != "" ? st.Description() : "");
         }
 
-        public override void Apply(Character caster, Character target)
+        public override void Apply(Character caster, Character target, ref string log)
         {
             Random random = new Random();
             if (random.Next(0, 100) > chance) return;
 
             target.AddStatus(caster, status);
+            log += $"{target.name} has been inflicted with {status}!";
         }
 
         public override string ToDataString()

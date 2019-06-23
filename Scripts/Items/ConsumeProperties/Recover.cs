@@ -23,6 +23,12 @@ namespace PlantKitty.Scripts.Data
         {
             character.Hit(-amount);
         }
+
+        public override string OnConsume(Character target)
+        {
+            return $"{target.name} has recovered {amount} HP!";
+        }
+
         public override string ToDataString()
         {
             return $"Recover$amount>{amount}";

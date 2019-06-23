@@ -40,5 +40,10 @@ namespace PlantKitty.Scripts.Data
         {
             return $"StatsBuff_CP$percent>{buff.percent}$stats>{buff.stats.ToString()}";
         }
+
+        public override string OnConsume(Character target)
+        {
+            return $"{target.name} has been buffed!";
+        }
     }
 }

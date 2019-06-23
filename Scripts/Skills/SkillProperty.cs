@@ -11,7 +11,7 @@ namespace PlantKitty.Scripts.Skills
         public string name;
 
         public abstract string Description();
-        public abstract void Apply(Character caster, Character target);
+        public abstract void Apply(Character caster, Character target, ref string log);
         public abstract string ToDataString();
     }
 }

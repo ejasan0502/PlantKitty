@@ -22,6 +22,12 @@ namespace PlantKitty.Scripts.Data
         {
             character.Replenish(amount);
         }
+
+        public override string OnConsume(Character target)
+        {
+            return $"{target.name} has recovered {amount} MP!";
+        }
+
         public override string ToDataString()
         {
             return $"Replenish$amount>{amount}";

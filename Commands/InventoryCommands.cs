@@ -106,12 +106,12 @@ namespace PlantKitty.Commands
                     Consumable consumeable = inventoryItem.item as Consumable;
                     if (consumeable.friendly)
                     {
+                        log = $"{Context.User.Mention}. You used 1 {itemName}!";
+
                         // Use item
-                        ((Consumable)inventoryItem.item).Use(player.inventory, player);
+                        ((Consumable)inventoryItem.item).Use(player, ref log);
                         player.inventory.RemoveItem(inventoryItem.item, 1);
                         PlayerData.Instance.SavePlayer(player.id);
-
-                        log = $"{Context.User.Mention}. You used 1 {itemName}!";
                     } else
                         log = $"{Context.User.Mention}. {itemName} cannot be used on you!";
                 }

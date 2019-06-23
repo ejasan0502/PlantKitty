@@ -40,13 +40,15 @@ namespace PlantKitty.Scripts.Data
                 properties = new List<ConsumeProperty>();
         }
 
-        public void Use(Inventory inventory, Character target)
+        public void Use(Character target, ref string log)
         {
             foreach (ConsumeProperty property in properties)
             {
+                if (log != "") log += "\n";
+                log += property.OnConsume(target);
+
                 property.Apply(target);
             }
-            inventory.RemoveItem(this, 1);
         }
     }
 }

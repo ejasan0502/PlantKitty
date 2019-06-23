@@ -32,7 +32,7 @@ namespace PlantKitty.Scripts.Combat
                     if (inflict < 1) inflict = 1f;
 
                     target.Hit(inflict);
-                    await channel.SendMessageAsync($"{target.name} takes {inflict} physical damage!");
+                    await channel.SendMessageAsync((isCrit ? "CRITICAL\n" : "") + $"{target.name} takes {inflict} physical damage!");
                 }
                 else
                     await channel.SendMessageAsync($"{self.name} missed {target.name}...");

@@ -18,7 +18,7 @@ namespace PlantKitty.Scripts.Combat
 
         public override async Task Perform(IMessageChannel channel)
         {
-            await Task.Delay(1);
+            await channel.SendMessageAsync($"{self.name} does nothing.");
         }
     }
 }
