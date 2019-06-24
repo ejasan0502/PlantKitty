@@ -50,6 +50,25 @@ namespace PlantKitty.Commands
             await ReplyAsync(log);
         }
 
+        [Command("info")]
+        public async Task CheckInfo()
+        {
+            Player player;
+            string log;
+            if (CheckPlayer(out player, out log))
+            {
+                string info = $"LVL: {player.level}\n" +
+                              $"XP: {player.exp}/{player.GetMaxExp()}\n" +
+                              $"Class: {player.job.name}";
+
+                EmbedBuilder builder = new EmbedBuilder()
+                    .AddField($"Stats", info);
+
+                await ReplyAsync(null, false, builder.Build());
+            }
+            else
+                await ReplyAsync(log);
+        }
         [Command("stats")]
         public async Task CheckStats()
         {
@@ -57,9 +76,7 @@ namespace PlantKitty.Commands
             string log;
             if (CheckPlayer(out player, out log))
             {
-                string stats = $"LVL: {player.level}\n" +
-                               $"XP: {player.exp}/{player.GetMaxExp()}\n\n" +
-                               $"HP: {player.currentStats.HP}/{player.maxStats.HP}\n" +
+                string stats = $"HP: {player.currentStats.HP}/{player.maxStats.HP}\n" +
                                $"MP: {player.currentStats.MP}/{player.maxStats.MP}\n" +
                                $"PATK: {player.currentStats.PATK}\n" +
                                $"PDEF: {player.currentStats.PDEF}\n" +
@@ -99,7 +116,7 @@ namespace PlantKitty.Commands
                 EmbedBuilder builder = new EmbedBuilder()
                     .WithTitle($"{Context.User.Username}'s Info")
                     .AddField($"attributes", info)
-                    .AddField($"Points Available", player.pointsAvailable);
+                    .AddField($"Points Available", player.attributePoints);
                 await ReplyAsync(null, false, builder.Build());
             }
             else
@@ -116,15 +133,18 @@ namespace PlantKitty.Commands
                 {
                     log = $"{Context.User.Mention}. This command is not available during combat!";
                 }
-                else
+                else if (player.attributePoints > 0)
                 {
-                    if (player.pointsAvailable < amount) amount = player.pointsAvailable;
+                    if (player.attributePoints < amount) amount = player.attributePoints;
                     player.AddAttribute(attribute, amount);
                     await ReplyAsync($"{Context.User.Mention}. {attribute} increased by {amount}");
                     PlayerData.Instance.SavePlayer(player.id);
                 }
+                else
+                    log = $"{Context.User.Mention}. Insufficient attribute points!";
             }
-            else
+
+            if (log != "")
                 await ReplyAsync(log);
         }
 

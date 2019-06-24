@@ -21,11 +21,12 @@ namespace PlantKitty.Scripts.Data
         public PlayerTask task;
         public string field;
         public JobClass job;
+        public int skillPoints;
         [JsonConverter(typeof(ListSkillJsonConverter))] public List<Skill> skills;
 
         public int level;
         public float exp;
-        public int pointsAvailable;
+        public int attributePoints;
 
         public Attributes lastAttributes;
         public Attributes attributes;
@@ -66,7 +67,8 @@ namespace PlantKitty.Scripts.Data
 
             level = 1;
             exp = 0f;
-            pointsAvailable = 0;
+            attributePoints = 0;
+            skillPoints = 0;
             CalculateMaxExp();
             leveledUp = false;
 
@@ -117,11 +119,11 @@ namespace PlantKitty.Scripts.Data
                 PDEF = baseStats.PDEF + positive.VIT - negative.AGI,
                 MATK = baseStats.MATK + positive.INT - negative.PSY,
                 MDEF = baseStats.MDEF + positive.PSY - negative.AGI,
-                ACC = baseStats.ACC + positive.DEX - (negative.STR + negative.INT)/2.00f,
+                ACC = baseStats.ACC + positive.DEX - (negative.STR + negative.INT) / 2.00f,
                 EVA = baseStats.EVA + positive.AGI - negative.VIT,
-                SPD = baseStats.SPD + positive.AGI - (negative.VIT + negative.DEX)/2.00f,
+                SPD = baseStats.SPD + positive.AGI - (negative.VIT + negative.DEX) / 2.00f,
                 CRIT = baseStats.CRIT,
-                CRITDMG = baseStats.CRITDMG + positive.DEX - negative.INT
+                CRITDMG = baseStats.CRITDMG + (positive.DEX - negative.INT) / 100f
             };
         }
         private void CalculateMaxStats()
@@ -213,7 +215,7 @@ namespace PlantKitty.Scripts.Data
             CalculateMaxStats();
 
             currentStats = new Stats(maxStats);
-            pointsAvailable += 5;
+            attributePoints += 5;
             leveledUp = true;
         }
         public void AddAttribute(string attribute, int amount, bool subtractPoint = true)
@@ -223,7 +225,7 @@ namespace PlantKitty.Scripts.Data
 
             int amt = (int)field.GetValue(attributes) + amount;
             field.SetValue(attributes, amt);
-            if (subtractPoint) pointsAvailable -= amount;
+            if (subtractPoint) attributePoints -= amount;
 
             CalculateStats();
             CalculateMaxStats();
@@ -369,6 +371,10 @@ namespace PlantKitty.Scripts.Data
         public void AddSkill(Skill skill)
         {
             skills.Add(skill);
+            skillPoints--;
+
+            if (job.skills.Contains(skill.name))
+                job.skills.Remove(skill.name);
         }
     }
 }

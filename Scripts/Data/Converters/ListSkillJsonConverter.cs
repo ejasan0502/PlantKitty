@@ -17,6 +17,7 @@ namespace PlantKitty.Scripts.Data.Converters
             string[] args = data.Split(',');
             foreach (string arg in args)
             {
+                if (arg == "") continue;
                 Skill skill = GameData.Instance.GetSkill(arg);
                 if (skill == null) continue;
                 values.Add(skill);

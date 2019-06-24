@@ -98,7 +98,7 @@ namespace PlantKitty.Commands
                 else
                 {
                     // Display learnable skills
-                    log = $"{Context.User.Mention}. Skills available to learn:";
+                    log = $"{Context.User.Mention}. You have {player.skillPoints} skill points left! Learnable skills:";
                     foreach (string s in player.job.skills)
                     {
                         if (log != "") log += "\n";
@@ -134,8 +134,12 @@ namespace PlantKitty.Commands
                         Skill skill = GameData.Instance.GetSkill(skillName);
                         if (skill != null)
                         {
-                            player.AddSkill(skill);
-                            log = $"{Context.User.Mention}. You have learned {skillName}!";
+                            if (player.skillPoints > 0)
+                            {
+                                player.AddSkill(skill);
+                                log = $"{Context.User.Mention}. You have learned {skillName}!";
+                            } else
+                                log = $"{Context.User.Mention}. Insufficient skill points!";
                         }
                         else
                         {
