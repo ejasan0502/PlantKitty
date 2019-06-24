@@ -109,12 +109,12 @@ namespace PlantKitty.Scripts.Actions
             }
 
             // Clear crafting queue
-            for (int i = craftQueue.Count - 1; i >= 0; i--)
+            craftQueue.RemoveRange(0, remainder - 1);
+            if (craftQueue.Count > 0 && craftQueue[0].amount < 1)
             {
-                if (i > remainder || i <= remainder && craftQueue[i].amount > 0) continue;
-
-                craftQueue.RemoveAt(i);
+                craftQueue.RemoveAt(0);
             }
+
             return gained;
         }
     }
