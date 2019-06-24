@@ -167,7 +167,7 @@ namespace PlantKitty.Scripts.Data
                     status.Apply(this);
             }
         }
-        private void IncreaseAttributes()
+        private void IncreaseAttributesStats()
         {
             lastAttributes = new Attributes(attributes.ToString());
             attributes += job.attributes;
@@ -205,9 +205,10 @@ namespace PlantKitty.Scripts.Data
         public void LevelUp()
         {
             level++;
+            exp = 0f;
             CalculateMaxExp();
 
-            IncreaseAttributes();
+            IncreaseAttributesStats();
             CalculateStats();
             CalculateMaxStats();
 

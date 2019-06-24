@@ -67,9 +67,9 @@ namespace PlantKitty.Commands
                 {
                     Battling task = player.task as Battling;
                     Battle battle = BattleManager.Instance.GetBattle(task.battleId);
-                    if (IsValidIndex(index, battle.monsters.Cast<Character>().ToList(), out log))
+                    if (IsValidIndex(index-1, battle.monsters.Cast<Character>().ToList(), out log))
                     {
-                        Attack action = new Attack(player, battle.monsters[index]);
+                        Attack action = new Attack(player, battle.monsters[index-1]);
                         battle.AddAction(action);
 
                         await BattleManager.Instance.PerformBattle(battle, Context.Channel);
@@ -103,9 +103,9 @@ namespace PlantKitty.Commands
                         else
                             characters = battle.monsters.Cast<Character>().ToList();
 
-                        if (IsValidIndex(index, characters, out log))
+                        if (IsValidIndex(index - 1, characters, out log))
                         {
-                            Use action = new Use(consumable, player, characters[index]);
+                            Use action = new Use(consumable, player, characters[index - 1]);
                             battle.AddAction(action);
 
                             await BattleManager.Instance.PerformBattle(battle, Context.Channel);
@@ -177,13 +177,13 @@ namespace PlantKitty.Commands
                             Battle battle = BattleManager.Instance.GetBattle(task.battleId);
 
                             List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
-                            if (IsValidIndex(index, characters, out log))
+                            if (IsValidIndex(index - 1, characters, out log))
                             {
                                 Cast action;
                                 if (skill.isAoe)
                                     action = new Cast(player, characters, skill);
                                 else
-                                    action = new Cast(player, characters[index], skill);
+                                    action = new Cast(player, characters[index - 1], skill);
                                 battle.AddAction(action);
 
                                 await BattleManager.Instance.PerformBattle(battle, Context.Channel);

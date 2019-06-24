@@ -70,7 +70,7 @@ namespace PlantKitty.Scripts.Combat
             {
                 string info = $"HP: {characters[i].currentStats.HP}/{characters[i].maxStats.HP}" +
                               $"\nMP: {characters[i].currentStats.MP}/{characters[i].maxStats.MP}";
-                builder.AddField($"{i}. {characters[i].name}", info, true);
+                builder.AddField($"{i+1}. {characters[i].name}", info, true);
             }
 
             await channel.SendMessageAsync(null, false, builder.Build());
@@ -83,7 +83,7 @@ namespace PlantKitty.Scripts.Combat
             {
                 string info = $"HP: {characters[i].currentStats.HP}/{characters[i].maxStats.HP}" +
                               $"\nMP: {characters[i].currentStats.MP}/{characters[i].maxStats.MP}";
-                builder.AddField($"{i}. {characters[i].name}", info, true);
+                builder.AddField($"{i+1}. {characters[i].name}", info, true);
             }
 
             await channel.SendMessageAsync(null, false, builder.Build());
