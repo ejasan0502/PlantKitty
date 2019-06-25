@@ -50,7 +50,7 @@ namespace PlantKitty.Scripts.Combat
             {
                 string monsterName = field.monsters[random.Next(0, field.monsters.Count)];
                 Monster monster = GameData.Instance.GetMonster(monsterName);
-                if (monster == null) continue;
+                if (monster == null || monster.level > level+10 || monster.level < level-10) continue;
                 monsters.Add(monster);
             }
 

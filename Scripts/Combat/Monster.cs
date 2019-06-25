@@ -12,6 +12,7 @@ namespace PlantKitty.Scripts.Combat
 {
     public class Monster : Character
     {
+        public int level;
         public float exp;
         [JsonConverter(typeof(ListStringJsonConverter))] public List<string> loot;
 
@@ -24,6 +25,7 @@ namespace PlantKitty.Scripts.Combat
             name = m.name;
             currentStats = new Stats(m.currentStats);
             maxStats = new Stats(m.maxStats);
+            level = m.level;
             exp = m.exp;
             loot = new List<string>(m.loot);
         }

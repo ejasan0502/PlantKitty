@@ -113,8 +113,8 @@ namespace PlantKitty.Scripts.Data
 
             stats = new Stats()
             {
-                HP = baseStats.HP + positive.VIT - negative.PSY,
-                MP = baseStats.MP + positive.PSY,
+                HP = baseStats.HP + 5*positive.VIT - negative.PSY,
+                MP = baseStats.MP + 4*positive.PSY,
                 PATK = baseStats.PATK + positive.STR - negative.DEX,
                 PDEF = baseStats.PDEF + positive.VIT - negative.AGI,
                 MATK = baseStats.MATK + positive.INT - negative.PSY,
@@ -139,11 +139,8 @@ namespace PlantKitty.Scripts.Data
         }
         private int CalculateNegativeBaseStat(int att)
         {
-            // Negative = (100x-3000)^(1/2)
-            if (att > 30)
-                return (int)Math.Round(Math.Pow(100.00 * att - 3000.00, 1.00 / 2.00));
-            else
-                return 0;
+            // Negative = (50x)^(1/2)
+            return (int)Math.Round(Math.Pow(50 * att, 1.00 / 2.00));
         }
         private void ApplyEquipmentStats()
         {
