@@ -75,8 +75,10 @@ namespace PlantKitty.Scripts.Actions
             int remainder = -1;
             List<InventoryItem> gained = new List<InventoryItem>();
 
-            // Add items based on time
+            // Find total amount of minutes passed
             double timeAccumulated = (DateTime.UtcNow - start).TotalMinutes;
+
+            // Add items based on time
             for (int i = 0; i < craftQueue.Count; i++)
             {
                 int amount = craftQueue[i].amount;
@@ -96,23 +98,26 @@ namespace PlantKitty.Scripts.Actions
                     timeAccumulated -= timeNeeded;
                     inventory.AddItem(item, amount);
                     gained.Add(new InventoryItem(item, amount));
+
+                    if (remainder != -1)
+                    {
+                        // Reset time
+                        if (timeAccumulated > 0)
+                        {
+                            start = DateTime.UtcNow;
+                            start.AddMinutes(-timeAccumulated);
+                        }
+
+                        // Clear crafting queue
+                        craftQueue.RemoveRange(0, remainder - 1);
+                        if (craftQueue.Count > 0 && craftQueue[0].amount < 1)
+                        {
+                            craftQueue.RemoveAt(0);
+                        }
+
+                        break;
+                    }
                 }
-
-                if (remainder != -1) break;
-            }
-
-            // Reset time
-            if (timeAccumulated > 0)
-            {
-                start = DateTime.UtcNow;
-                start.AddMinutes(-timeAccumulated);
-            }
-
-            // Clear crafting queue
-            craftQueue.RemoveRange(0, remainder - 1);
-            if (craftQueue.Count > 0 && craftQueue[0].amount < 1)
-            {
-                craftQueue.RemoveAt(0);
             }
 
             return gained;

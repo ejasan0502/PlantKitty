@@ -68,7 +68,8 @@ namespace PlantKitty.Commands
                     {
                         if (recipe.CanCraft(player.inventory, amount))
                         {
-                            Crafting crafting = player.task != null ? (Crafting)player.task : new Crafting();
+                            if (player.task == null) player.SetTask(new Crafting());
+                            Crafting crafting = player.task as Crafting;
 
                             crafting.AddCraft(recipe, amount, player.inventory);
                             await ReplyAsync($"{Context.User.Mention}. Added {amount} {itemName} to crafting queue!");
