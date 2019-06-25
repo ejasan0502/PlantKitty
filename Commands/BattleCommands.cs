@@ -67,6 +67,8 @@ namespace PlantKitty.Commands
                 {
                     Battling task = player.task as Battling;
                     Battle battle = BattleManager.Instance.GetBattle(task.battleId);
+
+                    if (index == 0) index++;
                     if (IsValidIndex(index-1, battle.monsters.Cast<Character>().ToList(), out log))
                     {
                         Attack action = new Attack(player, battle.monsters[index-1]);

@@ -216,6 +216,7 @@ namespace PlantKitty.Scripts.Data
 
             currentStats = new Stats(maxStats);
             attributePoints += 5;
+            skillPoints++;
             leveledUp = true;
         }
         public void AddAttribute(string attribute, int amount, bool subtractPoint = true)
