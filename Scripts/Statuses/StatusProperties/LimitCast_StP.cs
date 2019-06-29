@@ -17,7 +17,7 @@ namespace PlantKitty.Scripts.Statuses.StatusProperties
         }
         public override string ToDataString()
         {
-            return $"LimitAttack_StP";
+            return $"LimitCast_StP";
         }
     }
 }

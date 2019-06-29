@@ -41,6 +41,12 @@ namespace PlantKitty.Scripts.Data.Converters
                                 inflict = float.Parse(vals[2].Split('>')[1])
                             });
                             break;
+                        case "LimitCast_StP":
+                            properties.Add(new LimitCast_StP());
+                            break;
+                        case "LimitAttack_StP":
+                            properties.Add(new LimitAttack_StP());
+                            break;
                     }
                 }
             }
