@@ -80,8 +80,7 @@ namespace PlantKitty.Scripts.Data
             buffs = new List<Buff>();
             statuses = new List<Status>();
 
-            CalculateStats();
-            CalculateMaxStats();
+            RecalculateStats();
             currentStats = new Stats(maxStats);
         }
 
@@ -172,8 +171,7 @@ namespace PlantKitty.Scripts.Data
             attributes += job.attributes;
             baseStats += job.stats;
 
-            CalculateStats();
-            CalculateMaxStats();
+            RecalculateStats();
         }
 
         public void SetTask(PlayerTask task)
@@ -197,8 +195,7 @@ namespace PlantKitty.Scripts.Data
             attributes += this.job.attributes;
             baseStats += this.job.stats;
 
-            CalculateStats();
-            CalculateMaxStats();
+            RecalculateStats();
         }
 
         public void LevelUp()
@@ -208,8 +205,7 @@ namespace PlantKitty.Scripts.Data
             CalculateMaxExp();
 
             IncreaseAttributesStats();
-            CalculateStats();
-            CalculateMaxStats();
+            RecalculateStats();
 
             currentStats = new Stats(maxStats);
             attributePoints += 5;
@@ -225,8 +221,7 @@ namespace PlantKitty.Scripts.Data
             field.SetValue(attributes, amt);
             if (subtractPoint) attributePoints -= amount;
 
-            CalculateStats();
-            CalculateMaxStats();
+            RecalculateStats();
         }
         public float GetMaxExp()
         {
@@ -248,6 +243,11 @@ namespace PlantKitty.Scripts.Data
             }
             changes = new Attributes(0);
             return false;
+        }
+        public void RecalculateStats()
+        {
+            CalculateStats();
+            CalculateMaxStats();
         }
 
         public void Equip(Equip equip)
@@ -330,8 +330,7 @@ namespace PlantKitty.Scripts.Data
             if (!HasBuff(buff))
             {
                 buffs.Add(buff);
-                CalculateStats();
-                CalculateMaxStats();
+                RecalculateStats();
 
                 return true;
             }
@@ -353,8 +352,7 @@ namespace PlantKitty.Scripts.Data
 
                 if (recalculateStats)
                 {
-                    CalculateStats();
-                    CalculateMaxStats();
+                    RecalculateStats();
                 }
             }
         }

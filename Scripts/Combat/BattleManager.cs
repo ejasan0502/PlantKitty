@@ -50,7 +50,7 @@ namespace PlantKitty.Scripts.Combat
             {
                 string monsterName = field.monsters[random.Next(0, field.monsters.Count)];
                 Monster monster = GameData.Instance.GetMonster(monsterName);
-                if (monster == null || monster.level > level+10 || monster.level < level-10) continue;
+                if (monster == null || monster.level > level+5 || monster.level < level-5) continue;
                 monsters.Add(monster);
             }
 
@@ -150,8 +150,7 @@ namespace PlantKitty.Scripts.Combat
                     await channel.SendMessageAsync($"Gained x{l.Value.amount} {l.Key}");
                 }
 
-                p.SetTask(null);
-                PlayerData.Instance.SavePlayer(p.id);
+                ResetPlayer(p);
             }
 
             RemoveBattle(battle.id);
@@ -165,8 +164,7 @@ namespace PlantKitty.Scripts.Combat
                 p.AddExp(-xpLoss);
                 await channel.SendMessageAsync($"{p.name} have lost {xpLoss} experience!");
 
-                p.SetTask(null);
-                PlayerData.Instance.SavePlayer(p.id);
+                ResetPlayer(p);
             }
 
             battles.Remove(battle.id);
@@ -254,6 +252,17 @@ namespace PlantKitty.Scripts.Combat
         {
             if (battles.ContainsKey(battleId))
                 battles.Remove(battleId);
+        }
+        public void ResetPlayer(Player p)
+        {
+            p.SetTask(null);
+            p.ClearStatuses();
+            p.RecalculateStats();
+
+            p.SetCanAttack(true);
+            p.SetCanCast(true);
+
+            PlayerData.Instance.SavePlayer(p.id);
         }
     }
 }

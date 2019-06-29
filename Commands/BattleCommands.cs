@@ -29,7 +29,7 @@ namespace PlantKitty.Commands
         }
         private bool IsValidIndex(int index, List<Character> characters, out string log)
         {
-            log = $"{Context.User.Mention}. Invalid index...";
+            log = "Invalid index...";
             if (index < 0 || index >= characters.Count) return false;
             if (characters[index].currentStats.HP <= 0) return false;
 
@@ -114,7 +114,7 @@ namespace PlantKitty.Commands
                         }
                     }
                     else
-                        log = $"{Context.User.Mention}. Unknown consumable item...";
+                        log = "Unknown consumable item...";
                 }
             }
 
@@ -141,9 +141,9 @@ namespace PlantKitty.Commands
                 Random random = new Random();
                 if (random.Next(0,100) <= 50 + player.currentStats.EVA)
                 {
-                    await ReplyAsync($"{Context.User.Mention}. You have successfully fled!");
+                    await ReplyAsync("You have successfully fled!");
                     BattleManager.Instance.RemoveBattle(battle.id);
-                    player.SetTask(null);
+                    BattleManager.Instance.ResetPlayer(player);
 
                     battle = null;
                     task = null;
@@ -175,27 +175,32 @@ namespace PlantKitty.Commands
                     {
                         if (player.HasSkill(skillName))
                         {
-                            Battling task = player.task as Battling;
-                            Battle battle = BattleManager.Instance.GetBattle(task.battleId);
-
-                            List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
-                            if (IsValidIndex(index - 1, characters, out log))
+                            if (player.currentStats.MP >= skill.mpCost)
                             {
-                                Cast action;
-                                if (skill.isAoe)
-                                    action = new Cast(player, characters, skill);
-                                else
-                                    action = new Cast(player, characters[index - 1], skill);
-                                battle.AddAction(action);
+                                Battling task = player.task as Battling;
+                                Battle battle = BattleManager.Instance.GetBattle(task.battleId);
 
-                                await BattleManager.Instance.PerformBattle(battle, Context.Channel);
+                                List<Character> characters = skill.isFriendly ? battle.players.Cast<Character>().ToList() : battle.monsters.Cast<Character>().ToList();
+                                if (IsValidIndex(index - 1, characters, out log))
+                                {
+                                    Cast action;
+                                    if (skill.isAoe)
+                                        action = new Cast(player, characters, skill);
+                                    else
+                                        action = new Cast(player, characters[index - 1], skill);
+                                    battle.AddAction(action);
+
+                                    await BattleManager.Instance.PerformBattle(battle, Context.Channel);
+                                }
                             }
+                            else
+                                log = "Not enough mana...";
                         }
                         else
-                            log = $"{Context.User.Mention}. You have not learned {skillName}!";
+                            log = $"You have not learned {skillName}!";
                     }
                     else
-                        log = $"{Context.User.Mention}. Unknown skill name...";
+                        log = "Unknown skill name...";
                 }
             }
 

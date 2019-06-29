@@ -10,6 +10,8 @@ namespace PlantKitty.Scripts.Skills
     public class Skill
     {
         public string name;
+        public int level;
+        public float mpCost;
         public bool isFriendly;
         public bool isAoe;
         [JsonConverter(typeof(ListSkillPropertyJsonConverter))] public List<SkillProperty> properties;
@@ -19,8 +21,9 @@ namespace PlantKitty.Scripts.Skills
         {
             get
             {
-                string info = "";
-                info += "Can only be applied to " + (isFriendly ? "Players" : "Monsters");
+                string info = $"MP Cost: {mpCost} mana";
+                info += $"\nLevel Req: {level}";
+                info += "\nCan only be applied to " + (isFriendly ? "Players" : "Monsters");
                 info += isAoe ? "\nArea of Effect" : "\nSingle Target";
                 foreach (SkillProperty p in properties)
                     info += "\n" + p.Description();

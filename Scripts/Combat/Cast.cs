@@ -29,23 +29,31 @@ namespace PlantKitty.Scripts.Combat
         public override async Task Perform(IMessageChannel channel)
         {
             if (self.currentStats.HP <= 0) return;
+            if (self.currentStats.MP < skill.mpCost) return;
 
-            Random random = new Random();
-            if (skill.isAoe)
+            if (self.canCast)
             {
-                await channel.SendMessageAsync($"{self.name} casts {skill.name}!");
-            }
-
-            foreach (Character target in targets)
-            {
-                if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
+                Random random = new Random();
+                if (skill.isAoe)
                 {
-                    string log = !skill.isAoe ? $"{self.name} casts {skill.name} on {target.name}!" : "";
-                    skill.Apply(self, target, ref log);
-                    await channel.SendMessageAsync(log);
+                    await channel.SendMessageAsync($"{self.name} casts {skill.name}!");
                 }
-                else
-                    await channel.SendMessageAsync($"{self.name} missed {target.name}...");
+
+                foreach (Character target in targets)
+                {
+                    if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
+                    {
+                        string log = !skill.isAoe ? $"{self.name} casts {skill.name} on {target.name}!" : "";
+                        skill.Apply(self, target, ref log);
+                        await channel.SendMessageAsync(log);
+                    }
+                    else
+                        await channel.SendMessageAsync($"{self.name} missed {target.name}...");
+                }
+                self.ConsumeMP(skill.mpCost);
+            } else
+            {
+                await channel.SendMessageAsync($"{self.name} cannot cast at this time!");
             }
         }
     }

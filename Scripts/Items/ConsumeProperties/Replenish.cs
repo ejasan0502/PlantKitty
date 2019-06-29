@@ -20,7 +20,7 @@ namespace PlantKitty.Scripts.Data
 
         public override void Apply(Character character)
         {
-            character.Replenish(amount);
+            character.ConsumeMP(-amount);
         }
 
         public override string OnConsume(Character target)

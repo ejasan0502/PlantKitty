@@ -23,10 +23,7 @@ namespace PlantKitty.Scripts.Skills.SkillProperties
 
         public override void Apply(Character caster, Character target, ref string log)
         {
-            foreach (string s in statuses)
-            {
-                target.RemoveStatus(s);
-            }
+            target.RemoveStatus(statuses);
             log += $"{target.name} has been cured!";
         }
 

@@ -136,10 +136,15 @@ namespace PlantKitty.Commands
                         {
                             if (player.skillPoints > 0)
                             {
-                                player.AddSkill(skill);
-                                log = $"{Context.User.Mention}. You have learned {skillName}!";
+                                if (player.level >= skill.level)
+                                {
+                                    player.AddSkill(skill);
+                                    log = $"{Context.User.Mention}. You have learned {skillName}!";
+                                }
+                                else
+                                    log = $"{Context.User.Mention}. Not high enough level...";
                             } else
-                                log = $"{Context.User.Mention}. Insufficient skill points!";
+                                log = $"{Context.User.Mention}. Insufficient skill points...";
                         }
                         else
                         {

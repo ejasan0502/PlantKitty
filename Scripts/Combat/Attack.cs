@@ -20,22 +20,28 @@ namespace PlantKitty.Scripts.Combat
         {
             if (self.currentStats.HP <= 0) return;
 
-            Random random = new Random();
-            foreach (Character target in targets)
+            if (self.canAttack)
             {
-                if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
+                Random random = new Random();
+                foreach (Character target in targets)
                 {
-                    bool isCrit = random.Next(0, 100) <= self.currentStats.CRIT;
+                    if (random.Next(0, 100) <= self.currentStats.ACC - target.currentStats.EVA)
+                    {
+                        bool isCrit = random.Next(0, 100) <= self.currentStats.CRIT;
 
-                    float inflict = self.currentStats.PATK * (isCrit ? self.currentStats.CRITDMG : 1);
-                    inflict -= target.currentStats.PDEF;
-                    if (inflict < 1) inflict = 1f;
+                        float inflict = self.currentStats.PATK * (isCrit ? self.currentStats.CRITDMG : 1);
+                        inflict -= target.currentStats.PDEF;
+                        if (inflict < 1) inflict = 1f;
 
-                    target.Hit(inflict);
-                    await channel.SendMessageAsync((isCrit ? "CRITICAL\n" : "") + $"{target.name} takes {inflict} physical damage!");
+                        target.Hit(inflict);
+                        await channel.SendMessageAsync((isCrit ? "CRITICAL\n" : "") + $"{target.name} takes {inflict} physical damage!");
+                    }
+                    else
+                        await channel.SendMessageAsync($"{self.name} missed {target.name}...");
                 }
-                else
-                    await channel.SendMessageAsync($"{self.name} missed {target.name}...");
+            } else
+            {
+                await channel.SendMessageAsync($"{self.name} cannot attack at this time!");
             }
         }
     }

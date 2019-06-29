@@ -26,5 +26,6 @@ namespace PlantKitty.Scripts.Statuses.StatusProperties
         {
             return $"DoT_StP$percent>{percent}$inflict>{inflict}";
         }
+
     }
 }
