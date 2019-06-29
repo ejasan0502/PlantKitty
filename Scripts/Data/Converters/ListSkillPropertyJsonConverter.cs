@@ -56,6 +56,13 @@ namespace PlantKitty.Scripts.Data.Converters
 
                             properties.Add(cure);
                             break;
+                        case "Drain_SP":
+                            properties.Add(new Drain_SP()
+                            {
+                                percent = bool.Parse(vals[1].Split('>')[1]),
+                                amount = float.Parse(vals[2].Split('>')[1])
+                            });
+                            break;
                     }
                 }
             }
