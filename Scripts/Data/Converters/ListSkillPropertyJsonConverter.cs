@@ -68,7 +68,7 @@ namespace PlantKitty.Scripts.Data.Converters
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString()+": "+data);
             }
 
             return properties;

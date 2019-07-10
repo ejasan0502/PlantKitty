@@ -62,7 +62,7 @@ namespace PlantKitty.Commands
                               $"Class: {player.job.name}";
 
                 EmbedBuilder builder = new EmbedBuilder()
-                    .AddField($"Stats", info);
+                    .AddField($"Basic Info", info);
 
                 await ReplyAsync(null, false, builder.Build());
             }

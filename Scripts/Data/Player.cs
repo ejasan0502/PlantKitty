@@ -84,11 +84,6 @@ namespace PlantKitty.Scripts.Data
             currentStats = new Stats(maxStats);
         }
 
-        private void CalculateMaxExp()
-        {
-            // x^2
-            maxExp = level * level;
-        }
         private void CalculateStats()
         {
             Attributes positive = new Attributes()
@@ -248,6 +243,11 @@ namespace PlantKitty.Scripts.Data
         {
             CalculateStats();
             CalculateMaxStats();
+        }
+        public void CalculateMaxExp()
+        {
+            // x^2
+            maxExp = level * level;
         }
 
         public void Equip(Equip equip)

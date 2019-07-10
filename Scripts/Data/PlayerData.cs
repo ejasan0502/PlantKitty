@@ -98,6 +98,8 @@ namespace PlantKitty.Scripts.Data
 
                     if (p.task is Battling)
                         p.SetTask(null);
+
+                    p.CalculateMaxExp();
                 }
             }
             Console.WriteLine("Player data loaded!");
