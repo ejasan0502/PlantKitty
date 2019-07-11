@@ -9,5 +9,7 @@ namespace PlantKitty.Scripts.Data
     public abstract class NPC
     {
         public string name;
+
+        public abstract string OnInteractDialogue();
     }
 }

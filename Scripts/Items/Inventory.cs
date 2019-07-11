@@ -17,13 +17,6 @@ namespace PlantKitty.Scripts.Data
             slots = new List<InventoryItem>();
         }
 
-        private InventoryItem GetSlot(string itemName)
-        {
-            foreach (InventoryItem slot in slots)
-                if (slot != null && slot.item.name == itemName)
-                    return slot;
-            return null;
-        }
         private InventoryItem GetSlot(string itemName, out int index)
         {
             for (int i = 0; i < slots.Count; i++)
@@ -34,6 +27,14 @@ namespace PlantKitty.Scripts.Data
                 }
 
             index = -1;
+            return null;
+        }
+
+        public InventoryItem GetSlot(string itemName)
+        {
+            foreach (InventoryItem slot in slots)
+                if (slot != null && slot.item.name == itemName)
+                    return slot;
             return null;
         }
 
