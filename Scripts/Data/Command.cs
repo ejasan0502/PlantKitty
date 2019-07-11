@@ -22,6 +22,7 @@ namespace PlantKitty.Scripts.Data
         inventory,
         gesture,
         utility,
-        world
+        world,
+        npc
     }
 }

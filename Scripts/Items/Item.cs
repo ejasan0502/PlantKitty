@@ -13,6 +13,8 @@ namespace PlantKitty.Scripts.Data
         public string name;
         public Tier tier;
         public LootCategory lootCategory;
+        public int buyValue;
+        public int sellValue;
 
         [JsonIgnore]
         public virtual string Description
@@ -28,6 +30,8 @@ namespace PlantKitty.Scripts.Data
             this.name = name;
             tier = Tier.common;
             lootCategory = LootCategory.foraging;
+            buyValue = 0;
+            sellValue = 0;
         }
 
         public Color GetColor()

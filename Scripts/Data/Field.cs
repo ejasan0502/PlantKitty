@@ -13,5 +13,14 @@ namespace PlantKitty.Scripts.Data
         public string name;
         [JsonConverter(typeof(ListStringJsonConverter))] public List<string> loot;
         [JsonConverter(typeof(ListStringJsonConverter))] public List<string> monsters;
+        [JsonConverter(typeof(ListNPCJsonConverter))] public List<NPC> npcs;
+
+        public bool HasNPC(string npcName)
+        {
+            foreach (NPC npc in npcs)
+                if (npc.name == npcName)
+                    return true;
+            return false;
+        }
     }
 }

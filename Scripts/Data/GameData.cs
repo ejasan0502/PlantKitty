@@ -23,6 +23,7 @@ namespace PlantKitty.Scripts.Data
         private const string JobDataPath = "Resources/JobData.json";
         private const string SkillDataPath = "Resources/SkillData.json";
         private const string StatusDataPath = "Resources/StatusData.json";
+        private const string NPCDataPath = "Resources/NPCData.json";
 
         private ItemData itemData;
         private WorldData worldData;
@@ -31,6 +32,7 @@ namespace PlantKitty.Scripts.Data
         private JobData jobData;
         private SkillData skillData;
         private StatusData statusData;
+        private NPCData npcData;
 
         private static GameData instance;
         public static GameData Instance
@@ -54,6 +56,7 @@ namespace PlantKitty.Scripts.Data
             skillData = new SkillData(SkillDataPath);
             monsterData = new MonsterData(MonsterDataPath);
             jobData = new JobData(JobDataPath);
+            npcData = new NPCData(NPCDataPath);
         }
 
         public void LoadRecipes()
@@ -169,6 +172,12 @@ namespace PlantKitty.Scripts.Data
 
             Console.WriteLine("GetStatus returned null! " + status);
             return default;
+        }
+        public NPC GetNPC(string npcName)
+        {
+            if (npcData.data.ContainsKey(npcName))
+                return npcData.data[npcName];
+            return null;
         }
     }
 }
