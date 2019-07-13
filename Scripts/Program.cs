@@ -44,6 +44,8 @@ namespace PlantKitty
             playerData = PlayerData.Instance;
             battleManager = BattleManager.Instance;
 
+            await gameData.Load();
+
             service = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(commands)

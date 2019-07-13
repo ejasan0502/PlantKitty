@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace PlantKitty.Scripts.Data
 {
@@ -16,7 +17,7 @@ namespace PlantKitty.Scripts.Data
         public abstract List<T> GenerateData(string path);
         public abstract void AddDataToDictionary(List<T> dataList);
 
-        public void Load(string path)
+        public async Task Load(string path)
         {
             List<T> dataList = new List<T>();
             if (!File.Exists(path))
@@ -27,6 +28,7 @@ namespace PlantKitty.Scripts.Data
                 dataList = JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(path));
 
             AddDataToDictionary(dataList);
+            await Task.Delay(1000);
         }
     }
 }

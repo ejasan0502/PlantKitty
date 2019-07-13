@@ -34,34 +34,45 @@ namespace PlantKitty.Scripts.Data
         private StatusData statusData;
         private NPCData npcData;
 
+        private static object padlock = new object();
         private static GameData instance;
         public static GameData Instance
         {
             get
             {
-                if (instance == null)
+                lock (padlock)
                 {
-                    instance = new GameData();
-                    instance.LoadRecipes();
+                    if (instance == null)
+                    {
+                        instance = new GameData();
+                    }
+                    return instance;
                 }
-                return instance;
             }
         }
 
         private GameData()
         {
-            itemData = new ItemData(ItemDataPath);
-            worldData = new WorldData(WorldDataPath);
-            statusData = new StatusData(StatusDataPath);
-            skillData = new SkillData(SkillDataPath);
-            monsterData = new MonsterData(MonsterDataPath);
-            jobData = new JobData(JobDataPath);
-            npcData = new NPCData(NPCDataPath);
+            itemData = new ItemData();
+            worldData = new WorldData();
+            statusData = new StatusData();
+            skillData = new SkillData();
+            recipeData = new RecipeData();
+            monsterData = new MonsterData();
+            jobData = new JobData();
+            npcData = new NPCData();
         }
 
-        public void LoadRecipes()
+        public async Task Load()
         {
-            recipeData = new RecipeData(RecipeDataPath);
+            await itemData.Load(ItemDataPath);
+            await statusData.Load(StatusDataPath);
+            await skillData.Load(SkillDataPath);
+            await recipeData.Load(RecipeDataPath);
+            await monsterData.Load(MonsterDataPath);
+            await jobData.Load(JobDataPath);
+            await npcData.Load(NPCDataPath);
+            await worldData.Load(WorldDataPath);
         }
 
         public Field GetField(string fieldName)

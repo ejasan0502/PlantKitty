@@ -7,9 +7,9 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class ItemData : DataLoader<Item>
     {
-        public ItemData(string path) : base()
+        public ItemData() : base()
         {
-            Load(path);
+
         }
 
         public override List<Item> GenerateData(string path)

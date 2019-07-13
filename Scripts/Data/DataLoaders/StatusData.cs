@@ -9,9 +9,8 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class StatusData : DataLoader<Status>
     {
-        public StatusData(string path) : base()
+        public StatusData() : base()
         {
-            Load(path);
         }
 
         public override List<Status> GenerateData(string path)

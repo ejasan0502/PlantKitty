@@ -36,16 +36,39 @@ namespace PlantKitty.Commands
 
             foreach (Field field in GameData.Instance.GetFields())
             {
-                string loot = "";
-                for (int i = 0; i < field.loot.Count; i++)
+                string text = "";
+                if (field.loot != null)
                 {
-                    if (i != 0) loot += "\n";
-                    loot += field.loot[i];
+                    text = "Loot";
+
+                    foreach (string s in field.loot)
+                    {
+                        text += "\n" + s;
+                    }
+                }
+                if (field.monsters != null)
+                {
+                    if (text != "") text += "\n\n";
+                    text += "Monsters";
+
+                    foreach (string s in field.monsters)
+                    {
+                        text += "\n" + s;
+                    }
+                }
+                if (field.npcs != null)
+                {
+                    if (text != "") text += "\n\n";
+                    text += "NPCs";
+
+                    foreach (NPC s in field.npcs)
+                    {
+                        text += "\n" + s.name;
+                    }
                 }
 
-                builder.AddField(field.name, loot, true);
+                builder.AddField(field.name, text, true);
             }
-
             await ReplyAsync(null, false, builder.Build());
         }
 

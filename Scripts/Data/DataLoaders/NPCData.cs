@@ -7,9 +7,8 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class NPCData : DataLoader<NPC>
     {
-        public NPCData(string path) : base()
+        public NPCData() : base()
         {
-            Load(path);
         }
 
         public override List<NPC> GenerateData(string path)

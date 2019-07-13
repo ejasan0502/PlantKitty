@@ -9,9 +9,8 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class SkillData : DataLoader<Skill>
     {
-        public SkillData(string path) : base()
+        public SkillData() : base()
         {
-            Load(path);
         }
 
         public override List<Skill> GenerateData(string path)

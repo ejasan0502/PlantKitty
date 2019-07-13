@@ -7,9 +7,8 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class JobData : DataLoader<JobClass>
     {
-        public JobData(string path) : base()
+        public JobData() : base()
         {
-            Load(path);
         }
 
         public override List<JobClass> GenerateData(string path)

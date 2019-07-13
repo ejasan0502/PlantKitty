@@ -8,9 +8,8 @@ namespace PlantKitty.Scripts.Data.DataLoaders
 {
     public class MonsterData : DataLoader<Monster>
     {
-        public MonsterData(string path) : base()
+        public MonsterData() : base()
         {
-            Load(path);
         }
 
         public override List<Monster> GenerateData(string path)

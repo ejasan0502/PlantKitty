@@ -9,11 +9,9 @@ namespace PlantKitty.Scripts.Data.DataLoaders
     {
         public Dictionary<string, List<string>> recipeItemTypes;
 
-        public RecipeData(string path) : base()
+        public RecipeData() : base()
         {
             recipeItemTypes = new Dictionary<string, List<string>>();
-
-            Load(path);
         }
 
         public override List<Recipe> GenerateData(string path)
